@@ -139,7 +139,7 @@ z_A = (1/2) x_A + (1/√6) x_B
 ```sh
 uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -r demo/requirements.txt
-.venv/bin/python demo/train.py --out outputs
+.venv/bin/python demo/train.py --out runs/first
 .venv/bin/python -m unittest discover -s demo -p 'test_*.py'
 ```
 
@@ -149,17 +149,19 @@ uv pip install --python .venv/bin/python -r demo/requirements.txt
 
 ```sh
 .venv/bin/python demo/train.py \
-  --evaluate outputs/gcn-7.pt --out outputs/re-evaluation
+  --evaluate runs/first/gcn-7.pt --out runs/first-evaluation
 ```
+
+训练完成后打开 `runs/first/report.html`，查看本次曲线、混淆矩阵与逐节点预测 CSV。不传 `--out` 时会自动创建 `runs/<UTC 时间戳>/`；非空目录需显式加 `--overwrite` 才会替换。此介绍页保留 `outputs/` 中的参考实验，新实验与参考结果独立存放。
 
 ### 四个有解释力的练习
 
-1. **边不再提供类别线索**：`--p-in 0.06 --p-out 0.06 --out outputs/no-community`。不要预设 GCN 一定胜过 MLP；关注多种子均值与波动。
-2. **增加特征噪声**：`--noise 2.5 --out outputs/noisy`。图仍可靠时，比较邻居聚合的价值。
-3. **增加深度**：`--layers 8 --out outputs/deep`。本模型无残差，深度可能增加平滑与优化困难；不能只凭准确率下降就断言唯一原因是过平滑。
-4. **去掉 dropout**：`--dropout 0 --out outputs/no-dropout`。比较训练与验证曲线，讨论过拟合。
+1. **边不再提供类别线索**：`--p-in 0.06 --p-out 0.06 --out runs/no-community`。不要预设 GCN 一定胜过 MLP；关注多种子均值与波动。
+2. **增加特征噪声**：`--noise 2.5 --out runs/noisy`。图仍可靠时，比较邻居聚合的价值。
+3. **增加深度**：`--layers 8 --out runs/deep`。本模型无残差，深度可能增加平滑与优化困难；不能只凭准确率下降就断言唯一原因是过平滑。
+4. **去掉 dropout**：`--dropout 0 --out runs/no-dropout`。比较训练与验证曲线，讨论过拟合。
 
-上面命令的参数需接在 `.../demo/train.py` 后；输出路径分别保留，避免覆盖默认参考结果。也可用 `--seeds 7 17 27 37 47` 扩大实验。更严格的后续实验应固定数据与划分，只改变模型初始化；再换新图评估归纳能力。学习包没有宣称完成 Cora 等真实数据集复现。
+上面命令的参数需接在 `.../demo/train.py` 后；输出路径分别保留，避免覆盖默认参考结果。也可用 `--seeds 7 17 27 37 47` 扩大实验。可以添加 `--data-seed 42` 固定图、特征与划分，只改变模型训练随机性（Shuffled 的置换仍随种子变化）；再换新图评估归纳能力。学习包没有宣称完成 Cora 等真实数据集复现。
 
 ## 09 · 代码、结果和原文如何对照
 

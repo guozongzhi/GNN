@@ -207,22 +207,23 @@ H^(l+1) = σ(S H^l W^l)      聚合 → 线性变换 → 非线性
 <h3 id="_3">从仓库根目录运行</h3>
 <pre><code class="language-sh">uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -r demo/requirements.txt
-.venv/bin/python demo/train.py --out outputs
+.venv/bin/python demo/train.py --out runs/first
 .venv/bin/python -m unittest discover -s demo -p 'test_*.py'
 </code></pre>
 <p>如果没有 uv，可以用 Python 3.12 的 <code>python3.12 -m venv</code>，再用该环境的 <code>python -m pip install</code>。依赖首次安装需要网络，训练和阅读无需外部服务。</p>
 <p>评估已保存权重（仅加载自己生成或可信的 checkpoint）：</p>
 <pre><code class="language-sh">.venv/bin/python demo/train.py \
-  --evaluate outputs/gcn-7.pt --out outputs/re-evaluation
+  --evaluate runs/first/gcn-7.pt --out runs/first-evaluation
 </code></pre>
+<p>训练完成后打开 <code>runs/first/report.html</code>，查看本次曲线、混淆矩阵与逐节点预测 CSV。不传 <code>--out</code> 时会自动创建 <code>runs/&lt;UTC 时间戳&gt;/</code>；非空目录需显式加 <code>--overwrite</code> 才会替换。此介绍页保留 <code>outputs/</code> 中的参考实验，新实验与参考结果独立存放。</p>
 <h3 id="_4">四个有解释力的练习</h3>
 <ol>
-<li><strong>边不再提供类别线索</strong>：<code>--p-in 0.06 --p-out 0.06 --out outputs/no-community</code>。不要预设 GCN 一定胜过 MLP；关注多种子均值与波动。</li>
-<li><strong>增加特征噪声</strong>：<code>--noise 2.5 --out outputs/noisy</code>。图仍可靠时，比较邻居聚合的价值。</li>
-<li><strong>增加深度</strong>：<code>--layers 8 --out outputs/deep</code>。本模型无残差，深度可能增加平滑与优化困难；不能只凭准确率下降就断言唯一原因是过平滑。</li>
-<li><strong>去掉 dropout</strong>：<code>--dropout 0 --out outputs/no-dropout</code>。比较训练与验证曲线，讨论过拟合。</li>
+<li><strong>边不再提供类别线索</strong>：<code>--p-in 0.06 --p-out 0.06 --out runs/no-community</code>。不要预设 GCN 一定胜过 MLP；关注多种子均值与波动。</li>
+<li><strong>增加特征噪声</strong>：<code>--noise 2.5 --out runs/noisy</code>。图仍可靠时，比较邻居聚合的价值。</li>
+<li><strong>增加深度</strong>：<code>--layers 8 --out runs/deep</code>。本模型无残差，深度可能增加平滑与优化困难；不能只凭准确率下降就断言唯一原因是过平滑。</li>
+<li><strong>去掉 dropout</strong>：<code>--dropout 0 --out runs/no-dropout</code>。比较训练与验证曲线，讨论过拟合。</li>
 </ol>
-<p>上面命令的参数需接在 <code>.../demo/train.py</code> 后；输出路径分别保留，避免覆盖默认参考结果。也可用 <code>--seeds 7 17 27 37 47</code> 扩大实验。更严格的后续实验应固定数据与划分，只改变模型初始化；再换新图评估归纳能力。学习包没有宣称完成 Cora 等真实数据集复现。</p>
+<p>上面命令的参数需接在 <code>.../demo/train.py</code> 后；输出路径分别保留，避免覆盖默认参考结果。也可用 <code>--seeds 7 17 27 37 47</code> 扩大实验。可以添加 <code>--data-seed 42</code> 固定图、特征与划分，只改变模型训练随机性（Shuffled 的置换仍随种子变化）；再换新图评估归纳能力。学习包没有宣称完成 Cora 等真实数据集复现。</p>
 <h2 id="09">09 · 代码、结果和原文如何对照</h2>
 <ul>
 <li><code>demo/train.py</code>：<code>make_graph()</code> 构造数据与划分；<code>normalize()</code> 实现 S；<code>Network.forward()</code> 对应公式；<code>fit()</code> 分开训练损失、验证选模与测试评估。</li>

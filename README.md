@@ -1,100 +1,125 @@
-# GNN 学习包
+# GNN：从一条消息到一次实验
 
-一套从原始论文、可视化原理到实际训练/评估的独立培训材料。核查日期：**2026-11-10**。独立维护 GNN 学习材料与可复现实验。
+[![Checks](https://github.com/guozongzhi/GNN/actions/workflows/checks.yml/badge.svg)](https://github.com/guozongzhi/GNN/actions/workflows/checks.yml)
 
-仓库：[guozongzhi/GNN](https://github.com/guozongzhi/GNN)（私有）。
+中文图神经网络学习包：**可交互原理介绍、21 篇关键论文索引、20 份原始 PDF，以及可在 CPU 上训练和评估的 PyTorch Demo。** 应用资料核查日期：2026-11-10。
+
+![消息传递交互预览](outputs/message-passing.png)
+
+## 先看什么
+
+| 你的目标 | 入口 |
+| --- | --- |
+| 直观看懂 GNN | [离线交互介绍](outputs/gnn-guide.html)：选节点、改边、切换归一化、逐层传消息 |
+| 在 GitHub 直接阅读 | [原理与应用介绍](content/gnn-introduction.md) |
+| 找经典论文与历史里程碑 | [论文索引与原始 PDF](source/paper-index.md) |
+| 判断应用证据是否可靠 | [应用事实核查](content/fact-check.md) |
+| 学会设计和解读实验 | [实验练习与常见问题](content/experiment-guide.md) |
+
+GitHub 文件页显示 HTML 源码；克隆或下载整个仓库后，在浏览器打开 `outputs/gnn-guide.html` 才能使用交互。阅读页完全离线；首次安装 Python 依赖需要联网。
+
+## 从零运行
+
+需要 Python 3.12。以下命令从仓库根目录执行，适用于 macOS/Linux：
 
 ```sh
 git clone https://github.com/guozongzhi/GNN.git
 cd GNN
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r demo/requirements-lock.txt
+python demo/train.py
 ```
 
-## 先打开这里
-
-- **[可交互介绍](outputs/gnn-guide.html)**：离线双击打开；点击节点，切换归一化/自环/边，逐层观察消息传播；内含论文脉络、应用证据与实际训练结果。
-- [介绍母稿](content/gnn-introduction.md)、[论文索引](source/paper-index.md)、[应用事实核查](content/fact-check.md)。
-- [实验图](outputs/experiment.png)、[完整指标与混淆矩阵](outputs/results.json)。
-
-浏览器页是原理说明和已完成实验的查看器；**重新训练在本地 Python 执行**。页面不连接外部服务，不收集数据。
-
-## 直接运行
-
-本机工作区已准备好 Python 3.12 的 `.venv`；新克隆请先按下一节建立环境，再执行：
-
-```sh
-# 从仓库根目录运行
-.venv/bin/python demo/train.py --out outputs
-.venv/bin/python demo/train.py \
-  --evaluate outputs/gcn-7.pt --out outputs/re-evaluation
-```
-
-换机器时建立环境（首次安装需要联网；训练无需联网/账号/GPU）：
+已有 uv 的话，可把建环境与安装两步换成：
 
 ```sh
 uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -r demo/requirements-lock.txt
-# 无 uv 时：python3.12 -m venv .venv，再用环境的 python -m pip install -r ...
+source .venv/bin/activate
 ```
 
-经过验证的直接依赖为 PyTorch 2.6.0、NumPy 2.2.6、Matplotlib 3.10.1；锁文件保留本次解析的间接依赖。CPU 上使用稠密矩阵，是小图教学代码；不用于大图压力测试。
+Windows 使用 `py -3.12 -m venv .venv` 创建环境，然后在 PowerShell 执行 `.venv\Scripts\Activate.ps1`；后续 `python` 命令相同。Windows 尚未在本项目 CI 中验证。
 
-## 实验设计
-
-180 节点 / 3 类 / 16 维特征。每类训练 8、验证 12、测试 40 个节点。任务是**同一图上的传导式半监督节点分类**。只有训练标签进入损失；验证集选择 checkpoint；测试集用于选模后报告。特征标准化只在训练节点拟合。
-
-四个实验：GCN、同宽 MLP、仅自环 GCN、打乱图与节点对应关系的 GCN。无边 GCN 在本实现中与 MLP 完全等价，是一致性检查。默认运行 7/17/27 三个种子，每个种子同时改变数据/划分/初始化。默认是人为构造的同配图，结果不代表真实基准或业务精度。
-
-训练输出：每种模型与种子的权重 `.pt`、逐轮 CSV、验证选模轮次、测试 Accuracy/Macro-F1/混淆矩阵、PCA 可视化与结果汇总。`--evaluate` 重载权重、数据与传播矩阵，不重新训练。只读取自己生成或可信的 checkpoint。
-
-建议依次尝试：
+训练结束会打印 `report.html` 的位置。默认输出到 `runs/<UTC 时间戳>/`，无需改代码或配置 GPU。也可以指定目录：
 
 ```sh
-# 图不再带有社区线索
-.venv/bin/python demo/train.py --p-in .06 --p-out .06 --out outputs/no-community
-# 更深网络
-.venv/bin/python demo/train.py --layers 8 --out outputs/deep
-# 更强特征噪声
-.venv/bin/python demo/train.py --noise 2.5 --out outputs/noisy
+python demo/train.py --out runs/first
+# 打开 runs/first/report.html 查看这次实验
+python demo/train.py --evaluate runs/first/gcn-7.pt --out runs/first-evaluation
 ```
 
-自定义输出目录有自己的 results.json / results.js / 图 / 权重；主阅读页展示默认 outputs 下结果。重训默认目录后刷新阅读页即可更新动态指标与图片。
+已存在且非空的输出目录会被拒绝，避免覆盖；确认要替换时加 `--overwrite`。`runs/` 不纳入版本控制；`outputs/` 保存随仓库提供的参考实验与介绍页。
 
-## 原始材料与边界
+## 训练后得到什么
 
-`source/catalog.json` 是结构化阅读索引；`source/papers/` 保存未经改写的原始论文文件，`manifest.json` 记录下载来源 URL、下载时间、版本标记、页数、字节与 SHA-256。下载的 arXiv 文件属于作者公开版本，不保证与出版社排版相同。Scarselli 2009 从学术镜像获取，另保留 DOI 及作者机构记录链接；Gori 2005 未取得开放全文，明确保留缺口。
-
-`source/pages/` 保存能够下载的官方网页 HTML 原件，可能包含页面脚本；建议通过介绍和核查表阅读相应结论。`web-manifest.json` 记录网页获取失败的条目，不冒称全部网页均已离线。论文版权归原权利人；公开再分发前请核对各篇许可。
-
-应用口径区分历史部署、当前文档和科研验证。特别是：GraphCast 是重要科研里程碑，但当前 Google 文档与 ECMWF 新公告说明对应实时服务已停止/弃用；不能把历史论文写成现役服务清单。
-
-## 构建、验证与文件职责
-
-```sh
-# 额外的文档工具依赖；训练本身不需要
-uv pip install --python .venv/bin/python -r tools/requirements.txt
-.venv/bin/python tools/fetch-papers.py
-.venv/bin/python tools/build-guide.py
-.venv/bin/python -m unittest discover -s demo -p 'test_*.py'
-.venv/bin/python -m unittest discover -s tools -p 'test_*.py'
-git diff --check
-```
-
-下载工具复用已有 PDF 并重新校验内容；清单保留文件原下载时间。不自动追踪更新版本。若需更新，先另存旧文件与旧清单再移走目标 PDF 重跑。
-
-| 目录 | 内容 |
+| 文件 | 如何使用 |
 | --- | --- |
-| `source/` | 论文、官方网页、书目信息、溯源清单 |
-| `content/` | 原创介绍母稿与事实核查 |
-| `demo/` | 训练/评估代码、依赖和测试 |
-| `tools/` | 资料下载、阅读页构建与模板 |
-| `outputs/` | 生成阅读页、实验图表、日志、权重与验收记录 |
+| `report.html` | 本次实验的离线报告，展开每次训练查看混淆矩阵 |
+| `results.json` | 测试 Accuracy、Macro-F1、均值、样本标准差、配置和环境 |
+| `*-predictions.csv` | 每个节点的 train/val/test 划分、真实/预测类别、正确与否及类别概率 |
+| `*-history.csv` | 逐轮训练/验证损失与准确率 |
+| `*.pt` | 验证集选出的模型权重、数据和传播矩阵，可独立重载评估 |
+| `experiment.png` / `.svg` | 曲线、测试对照和节点表示投影 |
 
-当前不含 Cora 等真实数据集的论文级复现，也不含真实业务收益评估。下一步可在保持同一训练/验证/测试边界的前提下接入真实数据，再考虑 PyTorch Geometric 的稀疏实现。
+只有训练标签参与梯度；验证损失选择 checkpoint；测试集在选模后评分。预测概率未经校准。只加载自己生成或可信的 checkpoint。
 
-可选的浏览器验收使用 Playwright（不属于训练依赖）：
+## 三个实验，理解关系的作用
+
+默认是 180 个节点、3 类、16 维特征的合成图。训练/验证/测试节点为 24/36/120。实验是**同一图上的传导式节点分类**：训练可见全图特征和边，看不到测试标签。
 
 ```sh
-uv pip install --python .venv/bin/python playwright==1.51.0
-.venv/bin/python -m playwright install chromium
-.venv/bin/python tools/check-browser.py
+# 固定图、特征、划分；改变模型初始化与 dropout 随机性
+python demo/train.py --data-seed 42 --seeds 7 17 27 --out runs/fixed-data
+# 边不再携带社区线索
+python demo/train.py --p-in .06 --p-out .06 --out runs/no-community
+# 更多层，观察优化和表示变化
+python demo/train.py --layers 8 --out runs/deep
 ```
+
+每次都对比 GCN、MLP、仅自环 GCN 和打乱图的 GCN。**仅自环 GCN 与本实现的 MLP 等价**，是实现一致性检查，不是两项独立方法。打乱图保留图拓扑、边数与度分布，破坏图与节点特征/类别的对应关系。
+
+不传 `--data-seed` 时，种子同时改变数据、划分和初始化；传入后则固定数据与划分，且每个种子的打乱图置换仍会变化。标准差的含义取决于这个设定，不能直接当成置信区间。
+
+[原始参考实验](outputs/results.json)中，默认同配图 GCN 均值为 100%，MLP 为 49.7%；[无社区线索对照](outputs/no-community/results.json)中 GCN 为 40.8%。这展示了建图的重要性，**不能外推为真实基准或业务精度**。本包尚不包含 Cora 等真实数据集的论文级复现。
+
+## 自动检查与本地验证
+
+每次向 `main` 推送或提交 PR，GitHub Actions 检查：原始文件哈希、代码测试、阅读页构建一致性、浏览器交互、实际训练与权重重载。CI 使用 Linux/Python 3.12/CPU，并保留实验产物 7 天。
+
+本地可以执行相同检查：
+
+```sh
+python -m pip install -r tools/requirements.txt playwright==1.51.0
+python -m playwright install chromium
+python tools/verify-sources.py
+python -m unittest discover -s demo -p 'test_*.py'
+python -m unittest discover -s tools -p 'test_*.py'
+python tools/build-guide.py
+python tools/check-browser.py
+python tools/check-report.py runs/first
+```
+
+`check-report.py` 的目录应替换成你实际运行过的实验目录。构建介绍不会重新训练；实验也不会自动改写介绍母稿中的历史参考结果。
+
+## 论文与溯源
+
+`source/catalog.json` 定义阅读索引，`source/manifest.json` 记录 PDF 来源、原始下载时间、版本标记、页数、字节与 SHA-256。`source/web-manifest.json` 记录官方网页快照及明确的获取失败项。
+
+- `python tools/verify-sources.py`：只读核验 20 份 PDF 与 6 份网页原件，无需联网。
+- `python tools/fetch-papers.py`：复用已有文件或补下载。保留历史下载时间；没有可信时间时留空，不使用 clone 时间代替。若与已记录哈希不一致，保留原清单并写入 `tmp/download-report.json`。
+- 更新论文版本时，应先另存旧文件与清单，再明确更新目标记录；不把新的下载结果默认为旧原文。
+- Gori 2005 未取得开放全文；Scarselli 2009 是学术镜像副本；arXiv 文件不一定与出版社排版一致。论文版权归原权利人。
+
+## 目录
+
+| 目录 | 职责 |
+| --- | --- |
+| `content/` | 原创介绍、实验练习与事实核查 |
+| `demo/` | 训练、评估、实验报告、依赖和测试 |
+| `tools/` | 原文获取/核验、阅读页构建和浏览器检查 |
+| `source/` | 原始论文、官方网页和溯源清单 |
+| `outputs/` | 固定参考实验、可交互介绍与预览 |
+| `runs/` | 你新生成的实验，默认忽略 |
+
+[近期改动](CHANGELOG.md) · [CI 运行记录](https://github.com/guozongzhi/GNN/actions)

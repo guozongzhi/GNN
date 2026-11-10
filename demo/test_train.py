@@ -78,5 +78,42 @@ class DemoTests(unittest.TestCase):
             propagation(make_graph(), 'unknown', 7)
 
 
+class ExperimentTests(unittest.TestCase):
+    def test_single_hidden_unit_and_portable_report(self):
+        import csv
+        import json
+        from train import main
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder) / 'experiment'
+            main(['--out', str(out), '--epochs', '3', '--hidden', '1', '--seeds', '7', '17', '--data-seed', '42'])
+            report = json.loads((out / 'results.json').read_text())
+            self.assertEqual(report['config']['data_seed'], 42)
+            self.assertTrue((out / 'report.html').is_file())
+            self.assertTrue((out / 'experiment.png').is_file())
+            a = torch.load(out / 'gcn-7.pt', weights_only=True)
+            b = torch.load(out / 'gcn-17.pt', weights_only=True)
+            for key in a['data']:
+                torch.testing.assert_close(a['data'][key], b['data'][key])
+            with (out / 'gcn-7-predictions.csv').open() as f:
+                rows = list(csv.DictReader(f))
+            test = [row for row in rows if row['split'] == 'test']
+            self.assertEqual(len(test), 120)
+            accuracy = sum(row['true_label'] == row['prediction'] for row in test) / len(test)
+            self.assertAlmostEqual(accuracy, report['results'][0]['accuracy'], places=6)
+            self.assertTrue(all(abs(sum(float(row[f'p{i}']) for i in range(3)) - 1) < 1e-5 for row in rows))
+            with self.assertRaises(SystemExit):
+                main(['--out', str(out), '--epochs', '1'])
+
+    def test_invalid_cli_does_not_create_outputs(self):
+        from train import main
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder) / 'invalid'
+            for args in (['--noise', 'nan'], ['--lr', 'inf'], ['--p-in', '2'], ['--data-seed', '-1'],
+                         ['--seeds', '7', '7'], ['--seeds', '-1'], ['--noise', '-1']):
+                with self.subTest(args=args), self.assertRaises(SystemExit):
+                    main(['--out', str(out), *args])
+                self.assertFalse(out.exists())
+
+
 if __name__ == '__main__':
     unittest.main()

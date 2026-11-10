@@ -2,6 +2,8 @@
 import argparse
 import copy
 import csv
+from datetime import datetime, timezone
+import math
 import json
 from pathlib import Path
 import platform
@@ -11,11 +13,13 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
+from report import write_report
+
 
 def make_graph(seed=7, per_class=60, p_in=0.18, p_out=0.015, noise=1.5):
     if per_class < 24:
         raise ValueError('per_class must be >=24 for nonempty train/validation/test splits')
-    if not (0 <= p_in <= 1 and 0 <= p_out <= 1) or noise < 0:
+    if not (0 <= p_in <= 1 and 0 <= p_out <= 1) or not math.isfinite(noise) or noise < 0:
         raise ValueError('edge probabilities must be in [0,1]; noise must be nonnegative')
     rng = np.random.default_rng(seed)
     y = np.repeat(np.arange(3), per_class)
@@ -125,18 +129,31 @@ def fit(data, name, seed, config, out):
         logits = model(data['x'], prop)
         embedding = model.embedding(data['x'], prop)
         result = metrics(logits, data['y'], data['test'])
-    result.update(name=name, seed=seed, best_epoch=best_epoch, val_loss=best_loss)
+    result.update(name=name, seed=seed, data_seed=config.get('data_seed', seed),
+                  best_epoch=best_epoch, val_loss=best_loss)
     checkpoint = {'state_dict': best_state, 'config': config, 'name': name, 'seed': seed,
                   'data': data, 'propagation': prop, 'metrics': result}
     torch.save(checkpoint, out / f'{name}-{seed}.pt')
-    with (out / f'{name}-{seed}-history.csv').open('w') as f:
+    with (out / f'{name}-{seed}-history.csv').open('w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=list(history[0]))
         writer.writeheader()
         writer.writerows(history)
+    split = [''] * len(data['y'])
+    for partition in ('train', 'val', 'test'):
+        for node in data[partition].tolist():
+            split[node] = partition
+    probabilities = logits.softmax(1)
+    with (out / f'{name}-{seed}-predictions.csv').open('w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['node', 'split', 'true_label', 'prediction', 'correct', 'p0', 'p1', 'p2'])
+        for node, scores in enumerate(probabilities.tolist()):
+            prediction = int(logits[node].argmax())
+            target = int(data['y'][node])
+            writer.writerow([node, split[node], target, prediction, prediction == target, *scores])
     return result, history, logits, embedding
 
 
-def plot_run(data, records, out):
+def plot_run(data, records, out, layers=2):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -150,10 +167,12 @@ def plot_run(data, records, out):
     axes[0, 1].bar(names, [records[n][0]['accuracy'] for n in names], color=[colors[n] for n in names])
     axes[0, 1].set(title='Held-out test accuracy (one seed)', ylim=(0, 1.05))
     for ax, values, title in ((axes[1, 0], data['x'].numpy(), 'Input features: PCA'),
-                              (axes[1, 1], records['gcn'][3].numpy(), 'GCN hidden state: PCA')):
+                              (axes[1, 1], records['gcn'][3].numpy(), 'GCN hidden state: PCA' if layers > 1 else 'GCN input (no hidden layer): PCA')):
         centered = values - values.mean(0)
         u, s, _ = np.linalg.svd(centered, full_matrices=False)
         xy = u[:, :2] * s[:2]
+        if xy.shape[1] == 1:
+            xy = np.column_stack((xy[:, 0], np.zeros(len(xy))))
         for c in range(3):
             mask = data['y'].numpy() == c
             ax.scatter(xy[mask, 0], xy[mask, 1], s=22, label=f'Class {c}', alpha=0.8)
@@ -179,9 +198,11 @@ def evaluate(path, out):
     return report
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--out', type=Path, default=Path(__file__).resolve().parents[1] / 'outputs')
+    parser.add_argument('--out', type=Path, help='New experiment directory; defaults to runs/<UTC timestamp>')
+    parser.add_argument('--overwrite', action='store_true', help='Allow replacing files in an existing output directory')
+    parser.add_argument('--data-seed', type=int, help='Fix graph, features and split across model seeds')
     parser.add_argument('--seeds', type=int, nargs='+', default=[7, 17, 27])
     parser.add_argument('--epochs', type=int, default=200)
     parser.add_argument('--layers', type=int, choices=range(1, 9), default=2)
@@ -192,9 +213,23 @@ def main():
     parser.add_argument('--p-out', type=float, default=0.015)
     parser.add_argument('--noise', type=float, default=1.5)
     parser.add_argument('--evaluate', type=Path, help='Evaluate a trusted local .pt checkpoint without training')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.epochs <= 0 or args.hidden <= 0 or args.lr <= 0 or not 0 <= args.dropout < 1:
         parser.error('epochs, hidden and lr must be positive; dropout must be in [0,1)')
+    if not all(math.isfinite(getattr(args, k)) for k in ('lr', 'dropout', 'noise', 'p_in', 'p_out')):
+        parser.error('numeric parameters must be finite')
+    if not (0 <= args.p_in <= 1 and 0 <= args.p_out <= 1) or args.noise < 0:
+        parser.error('edge probabilities must be in [0,1]; noise must be nonnegative')
+    if len(args.seeds) != len(set(args.seeds)) or any(s < 0 or s >= 2**32 for s in args.seeds):
+        parser.error('seeds must be distinct integers in [0, 2**32)')
+    if args.data_seed is not None and not 0 <= args.data_seed < 2**32:
+        parser.error('data-seed must be in [0, 2**32)')
+    if args.out is None:
+        args.out = Path(__file__).resolve().parents[1] / 'runs' / datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    if args.out.exists() and not args.out.is_dir():
+        parser.error(f'output path is not a directory: {args.out}')
+    if args.out.exists() and any(args.out.iterdir()) and not args.overwrite:
+        parser.error(f'output directory is not empty: {args.out}; choose another path or use --overwrite')
     torch.set_num_threads(1)
     torch.use_deterministic_algorithms(True)
     if args.evaluate:
@@ -204,24 +239,29 @@ def main():
     config = {k: getattr(args, k) for k in ('epochs', 'layers', 'hidden', 'dropout', 'lr', 'p_in', 'p_out', 'noise')}
     results, first_records = [], {}
     for seed in args.seeds:
-        data = make_graph(seed, p_in=args.p_in, p_out=args.p_out, noise=args.noise)
+        data_seed = seed if args.data_seed is None else args.data_seed
+        config['data_seed'] = data_seed
+        data = make_graph(data_seed, p_in=args.p_in, p_out=args.p_out, noise=args.noise)
         for name in ('gcn', 'mlp', 'no_edges', 'shuffled'):
             record = fit(data, name, seed, config, args.out)
             results.append(record[0])
             if seed == args.seeds[0]:
                 first_records[name] = record
             print(f"{name:9} seed={seed} test={record[0]['accuracy']:.3f} macroF1={record[0]['macro_f1']:.3f}")
-    plot_run(make_graph(args.seeds[0], p_in=args.p_in, p_out=args.p_out, noise=args.noise), first_records, args.out)
+    plot_run(make_graph(args.seeds[0] if args.data_seed is None else args.data_seed, p_in=args.p_in, p_out=args.p_out, noise=args.noise), first_records, args.out, args.layers)
     summary = {name: {metric: {'mean': float(np.mean(values)), 'std': float(np.std(values, ddof=1)) if len(values) > 1 else None}
                       for metric in ('accuracy', 'macro_f1')
                       for values in [[row[metric] for row in results if row['name'] == name]]}
                for name in first_records}
     report = {'dataset': 'synthetic 3-block graph; transductive node classification',
               'nodes': 180, 'features': 16, 'split_sizes': {'train': 24, 'val': 36, 'test': 120},
-              'config': config, 'seeds': args.seeds, 'results': results, 'summary': summary,
+              'config': {**config, 'data_seed': args.data_seed}, 'seeds': args.seeds, 'results': results, 'summary': summary,
+              'seed_protocol': 'fixed graph/features/split; vary model and shuffle seeds' if args.data_seed is not None else 'vary graph/features/split/model seeds together',
               'environment': {'python': platform.python_version(), 'torch': torch.__version__, 'numpy': np.__version__, 'device': 'cpu'}}
     (args.out / 'results.json').write_text(json.dumps(report, indent=2) + '\n')
     (args.out / 'results.js').write_text('window.GNN_RESULTS = ' + json.dumps(report) + ';\n')
+    write_report(report, args.out)
+    print(f'Open report: {args.out.resolve() / "report.html"}')
 
 
 if __name__ == '__main__':
