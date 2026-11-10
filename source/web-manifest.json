@@ -1,0 +1,76 @@
+[
+  {
+    "id": "maps-deepmind",
+    "url": "https://deepmind.google/blog/traffic-prediction-with-advanced-graph-neural-networks/",
+    "retrieved_at": "2026-11-10T14:47:01.311263+00:00",
+    "resolved_url": "https://deepmind.google/blog/traffic-prediction-with-advanced-graph-neural-networks/",
+    "status": "downloaded",
+    "file": "pages/maps-deepmind.html",
+    "bytes": 148789,
+    "sha256": "662adb8778c301f1e919bd772f3c3d104b1ac6948db6df07b6f9df71a2198d60"
+  },
+  {
+    "id": "maps-google",
+    "url": "https://blog.google/products-and-platforms/products/maps/google-maps-101-how-ai-helps-predict-traffic-and-determine-routes/",
+    "retrieved_at": "2026-11-10T14:47:01.311485+00:00",
+    "resolved_url": "https://blog.google/products-and-platforms/products/maps/google-maps-101-how-ai-helps-predict-traffic-and-determine-routes/",
+    "status": "downloaded",
+    "file": "pages/maps-google.html",
+    "bytes": 342786,
+    "sha256": "79daff74b07f71e759d34d4df1a9588ad67d2768277cdfddceb65fabab37b810"
+  },
+  {
+    "id": "weathernext-graph",
+    "url": "https://developers.google.com/weathernext/guides/models-wn-graph",
+    "retrieved_at": "2026-11-10T14:47:01.311568+00:00",
+    "resolved_url": "https://developers.google.com/weathernext/guides/models-wn-graph",
+    "status": "downloaded",
+    "file": "pages/weathernext-graph.html",
+    "bytes": 63353,
+    "sha256": "fd0979122098cdbfddf1ca8ed2544c9b27f5ae7164ab3fd0bc5751cbbb975d33"
+  },
+  {
+    "id": "weathernext-deprecation",
+    "url": "https://developers.google.com/weathernext/guides/deprecation",
+    "retrieved_at": "2026-11-10T14:47:01.311612+00:00",
+    "resolved_url": "https://developers.google.com/weathernext/guides/deprecation",
+    "status": "downloaded",
+    "file": "pages/weathernext-deprecation.html",
+    "bytes": 58551,
+    "sha256": "f0a1a51a498bfebf6ebe4695b088668147c6f6210fe22a1f0cac33d6f80a98ec"
+  },
+  {
+    "id": "ecmwf-farewell",
+    "url": "https://www.ecmwf.int/en/about/media-centre/aifs-blog/2026/farewell-external-ai-models",
+    "retrieved_at": "2026-11-10T14:47:07.290601+00:00",
+    "resolved_url": "https://www.ecmwf.int/en/about/media-centre/aifs-blog/2026/farewell-external-ai-models",
+    "status": "downloaded",
+    "file": "pages/ecmwf-farewell.html",
+    "bytes": 56121,
+    "sha256": "cf4e3474c261640ea5e5b7900d8e48e10ba2adb79846b3ff994b89452c4e7751"
+  },
+  {
+    "id": "materials-project-versions",
+    "url": "https://docs.materialsproject.org/changes/database-versions",
+    "retrieved_at": "2026-11-10T14:47:10.591907+00:00",
+    "resolved_url": "https://docs.materialsproject.org/changes/database-versions",
+    "status": "downloaded",
+    "file": "pages/materials-project-versions.html",
+    "bytes": 901982,
+    "sha256": "f29dd1e8f705092f19f6472da261fb25cb49726d68357f92ddd8dd722299530b"
+  },
+  {
+    "id": "gori2005-record",
+    "url": "https://usiena-air.unisi.it/handle/11365/19137",
+    "retrieved_at": "2026-11-10T14:47:10.632806+00:00",
+    "status": "failed",
+    "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
+  },
+  {
+    "id": "scarselli2009-record",
+    "url": "https://usiena-air.unisi.it/handle/11365/26421",
+    "retrieved_at": "2026-11-10T14:47:11.710585+00:00",
+    "status": "failed",
+    "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1010)>"
+  }
+]

@@ -1,0 +1,6 @@
+[
+  "Six-node propagation, normalization, self-loops, edge ablation, depth, reset, confusion selector: passed",
+  "All local links and table-of-contents anchors exist: passed",
+  "Desktop 1440px and mobile 390px: no page-level horizontal overflow",
+  "No JavaScript errors; no external network requests"
+]

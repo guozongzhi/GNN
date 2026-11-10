@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GNN · 让模型沿着关系学习</title>
+<style>
+:root{--ink:#17302f;--muted:#526762;--paper:#f6f7f2;--line:#d6ded7;--accent:#12675e;--warm:#a94b20;--white:#fff;--soft:#e8f0e9}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.85 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}a{color:var(--accent);text-underline-offset:4px}a:hover{color:var(--warm)}.mast{border-bottom:1px solid var(--line);display:flex;justify-content:space-between;padding:18px 5vw;font-size:12px;letter-spacing:.1em}.mast a{text-decoration:none}.hero{max-width:1150px;margin:0 auto;padding:70px 28px 45px;display:grid;grid-template-columns:1.5fr 1fr;align-items:center;gap:25px}.eyebrow{font:12px/1.5 ui-monospace,monospace;letter-spacing:.13em;color:var(--accent)}h1{font-size:clamp(40px,5.2vw,70px);letter-spacing:-.045em;line-height:1.19;margin:20px 0 24px}.hero p{max-width:560px;color:var(--muted);font-size:18px}.hero-art{width:100%;height:auto}.pills{display:flex;gap:9px;flex-wrap:wrap}.pill{border:1px solid var(--line);padding:4px 12px;border-radius:30px;font-size:12px}.layout{max-width:1240px;margin:auto;display:grid;grid-template-columns:210px minmax(0,1fr);gap:44px;padding:20px 28px 80px}.sidebar{align-self:start;position:sticky;top:22px;border-top:2px solid var(--ink);padding-top:12px}.sidebar a{display:block;color:var(--muted);text-decoration:none;font-size:13px;padding:6px 0;line-height:1.6}.sidebar a:hover{color:var(--accent)}article{min-width:0}article>h1,article>blockquote:first-of-type{display:none}h2{font-size:27px;line-height:1.5;margin:65px 0 20px;letter-spacing:-.025em;border-top:1px solid var(--line);padding-top:26px;scroll-margin-top:20px}article>h2:first-of-type{margin-top:0}h3{font-size:20px;margin-top:32px}p{margin:17px 0}strong{font-weight:650}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.75;margin:22px 0;display:table}th,td{border-bottom:1px solid var(--line);padding:12px 10px;text-align:left;vertical-align:top}th{background:var(--soft);font-size:12px;letter-spacing:.04em}td:first-child{min-width:85px}pre{background:#173d37;color:#edf8ee;padding:22px;border-radius:8px;overflow:auto;font:13px/1.8 ui-monospace,SFMono-Regular,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.85em}p code,li code,td code{background:var(--soft);padding:2px 4px;border-radius:4px;overflow-wrap:anywhere}li{margin:9px 0}blockquote{border-left:3px solid var(--accent);padding-left:20px;color:var(--muted)}.lab{border:1px solid #b9cdc1;border-radius:14px;margin:30px 0;overflow:hidden;background:var(--white)}.lab-top{background:var(--soft);padding:20px 24px}.lab-top h3{margin:0;font-size:22px}.lab-top p{margin:5px 0 0;font-size:13px;color:var(--muted)}.lab-body{padding:22px;display:grid;grid-template-columns:1.15fr 1fr;gap:22px}.graph{width:100%;height:auto;background:#f7faf5;border-radius:8px}.graph .edge{stroke:#b5c5ba;stroke-width:2}.graph .edge.active{stroke:var(--accent);stroke-width:4}.node{cursor:pointer;outline:none}.node:focus circle{stroke:#a94b20;stroke-width:5}.node circle{stroke:#fff;stroke-width:3;transition:fill .25s}.node.chosen circle{stroke:var(--ink);stroke-width:4}.node text{pointer-events:none;font-size:15px;font-weight:650}.node .number{font-size:12px;font-family:ui-monospace,monospace}.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:14px;font-size:13px}button,select{font:inherit;border:1px solid #9caf9f;border-radius:5px;background:white;color:var(--ink);padding:7px 11px;cursor:pointer}button:hover{background:var(--soft)}button:disabled{opacity:.4;cursor:default}input[type=range]{accent-color:var(--accent);width:130px}input[type=checkbox]{accent-color:var(--accent)}.explain{font-size:13px;line-height:1.75}.explain h4{margin:2px 0 12px;font-size:17px}.equation{font:16px/1.65 ui-monospace,monospace;color:var(--accent);margin:15px 0}.explain table{font-size:12px}.explain td,.explain th{padding:7px}.explain td:first-child{min-width:40px}.small{font-size:12px;color:var(--muted)}.lab-foot{border-top:1px solid var(--line);padding:14px 22px;color:var(--muted);font-size:12px}.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:26px 0}.milestone{border-top:3px solid var(--accent);padding:14px;background:var(--white);border-bottom:1px solid var(--line)}.milestone .year{font:13px ui-monospace,monospace;color:var(--accent)}.milestone b{display:block;margin:7px 0;font-size:16px}.milestone p{margin:0;font-size:12px;color:var(--muted)}.results{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:22px;margin:25px 0}.results img{width:100%;height:auto}.result-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{padding:12px;background:var(--soft);border-radius:6px;font-size:12px}.metric b{display:block;font-size:25px;line-height:1.6}.metric span{color:var(--muted)}.caution{background:#fff1df;padding:15px 18px;border-left:3px solid var(--warm);font-size:13px;margin-top:16px}.confusion{max-width:400px}.references td:first-child{font-size:12px;overflow-wrap:anywhere}footer{padding:35px 5vw;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}@media(max-width:900px){.layout{grid-template-columns:1fr;gap:15px}.sidebar{position:static;display:flex;flex-wrap:wrap;gap:6px 18px}.sidebar a{font-size:12px}.hero{padding-top:35px}.lab-body{grid-template-columns:1fr 1fr}.timeline{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){body{font-size:15px}.mast{font-size:10px;padding:14px 20px}.hero{grid-template-columns:1fr;padding:28px 20px}.hero-art{height:150px}.hero h1{font-size:43px}.hero p{font-size:16px}.layout{padding:12px 18px 45px}.lab-body{grid-template-columns:1fr;padding:14px}.timeline{grid-template-columns:1fr 1fr;gap:9px}.milestone{padding:10px}.result-summary{grid-template-columns:1fr 1fr}.results{padding:12px}table{font-size:12px}td,th{padding:8px 5px}h2{font-size:23px}pre{font-size:11px;padding:14px}.table-wrap{overflow-x:auto}article .references{min-width:600px}.controls{gap:9px}}@media print{.sidebar,.mast{display:none}.layout{display:block;padding:0}.hero{padding:0}.lab,.results{break-inside:avoid}h2{break-after:avoid}body{font-size:11px;background:white}a{color:inherit}}
+</style>
+</head>
+<body>
+<header class="mast"><a href="../README.md">AI CAPABILITY · LEARNING NOTES</a><span>GRAPH LEARNING / 2026.11.10</span></header>
+<section class="hero"><div><div class="eyebrow">A PRACTICAL FIELD GUIDE / 01</div><h1>让模型<br>沿着关系学习。</h1><p>从一条邻居消息，到图神经网络。<br>用原始论文建立脉络，用一个小实验理解结构。</p><div class="pills"><span class="pill">原理交互</span><span class="pill">经典论文原文</span><span class="pill">CPU 训练与评估</span></div></div><svg class="hero-art" viewBox="0 0 400 280" role="img" aria-label="图上的邻居消息汇聚到中心节点"><g stroke="#abc0af" stroke-width="2"><path d="M65 68L185 135L290 45M185 135L335 165M185 135L95 237M185 135L240 248M65 68L290 45M95 237L240 248"/></g><g fill="#d7e5d8"><circle cx="65" cy="68" r="24"/><circle cx="290" cy="45" r="24"/><circle cx="335" cy="165" r="24"/><circle cx="95" cy="237" r="24"/><circle cx="240" cy="248" r="24"/></g><circle cx="185" cy="135" r="45" fill="#12675e"/><g fill="#12675e"><circle cx="123" cy="101" r="5"/><circle cx="238" cy="91" r="5"/><circle cx="260" cy="150" r="5"/><circle cx="142" cy="185" r="5"/></g><text x="185" y="141" text-anchor="middle" fill="white" font-size="19" font-family="monospace">hᵢ′</text></svg></section>
+<div class="layout"><nav class="sidebar" aria-label="文章目录"><a href="#01">01 · 为什么需要“图”</a><a href="#02-gnn">02 · 一层 GNN 究竟做了什么</a><a href="#03-gcn">03 · 从直觉走到 GCN 公式</a><a href="#04">04 · 三种任务，三种输出</a><a href="#05">05 · 历史脉络：每篇论文解决了什么</a><a href="#06">06 · 应用情况：部署证据与研究价值分开看</a><a href="#07">07 · 哪些问题仍然难</a><a href="#08">08 · 自己训练：观察关系的作用</a><a href="#09">09 · 代码、结果和原文如何对照</a><a href="#_5">参考资料</a></nav><article><h1 id="gnn">GNN：让模型沿着关系学习</h1>
+<blockquote>
+<p>一份从直觉、原始论文到可运行实验的学习指南。整理与应用状态核查日期：2026-11-10。适合了解基本神经网络、尚未系统接触图学习的读者。</p>
+</blockquote>
+<h2 id="01">01 · 为什么需要“图”</h2>
+<p>把一个人的特征单独交给模型，你能知道年龄、兴趣、消费习惯；把他与朋友、商品、商家的关系也交给模型，你多了一条判断路径：<strong>他与谁相连，以及连接对象是什么样的。</strong> 图神经网络（Graph Neural Network，GNN）把这种关系变成可学习的计算。</p>
+<p>图由节点 V 和边 E 组成。节点可以是用户、原子、路段或设备；边可以是互动、化学键、道路连通或干扰关系。节点特征 X 是一个 N×F 的表：N 个对象，每个有 F 个属性。邻接矩阵 A 是 N×N 的连接表。本教程约定 A[i,j] 表示节点 j 向节点 i 传消息；Demo 为无向图，所以 A 对称。</p>
+<table>
+<thead>
+<tr>
+<th>数据结构</th>
+<th>自然邻域</th>
+<th>模型如何使用关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>表格</td>
+<td>通常没有显式邻域</td>
+<td>MLP 分别处理每一行</td>
+</tr>
+<tr>
+<td>图像</td>
+<td>规则像素网格</td>
+<td>CNN 用共享卷积核处理局部窗口</td>
+</tr>
+<tr>
+<td>序列</td>
+<td>前后顺序或注意力连接</td>
+<td>序列模型处理位置与上下文</td>
+</tr>
+<tr>
+<td>图</td>
+<td>数量不固定、顺序无关的邻居</td>
+<td>GNN 沿边传消息并聚合</td>
+</tr>
+</tbody>
+</table>
+<p>GNN 的动机不是“关系越多越好”，而是<strong>有用的关系可以补充单个对象的信息</strong>。如果边由噪声、未来事件或目标标签泄漏构成，图反而可能误导模型。没有可信边时，应先用 MLP、树模型等简单基线。[gcn2017、mpnn2017、gn2018]</p>
+<h2 id="02-gnn">02 · 一层 GNN 究竟做了什么</h2>
+<p>可以把每个节点看作一个有笔记本的人。一次传播包含四件事：邻居把笔记变成消息；节点把收到的消息合成摘要；把摘要与自身状态结合；用所有节点共享的参数更新笔记。堆叠两层，就能间接接触两跳以内的信息。这里的“接触”是计算依赖，并不保证模型能完整保留所有远处信息。</p>
+<p>通用消息传递可以写成：</p>
+<pre><code class="language-text">消息：m(j→i) = M(h_i, h_j, e_ij)
+聚合：a_i = AGG({m(j→i) : j ∈ N(i)})
+更新：h_i' = U(h_i, a_i)
+</code></pre>
+<p>h 是节点当前向量，e 是边特征，M、U 可以是可学习函数。AGG 通常采用求和、均值或最大值，因为邻居交换排列顺序不应改变结果。这叫<strong>排列不变聚合</strong>。节点重编号后，节点输出应跟着重编号，叫<strong>排列等变</strong>。图分类再对所有节点读出一个整体向量，通常要求结果对节点编号不变。[mpnn2017、gin2019]</p>
+<div id="interactive-lab"></div>
+
+<h2 id="03-gcn">03 · 从直觉走到 GCN 公式</h2>
+<p>GCN（Graph Convolutional Network）是 GNN 的一种具体形式。Kipf 与 Welling 的常见传播式如下：[gcn2017，式 (2)]</p>
+<pre><code class="language-text">Ã = A + I                  自环：让节点保留自己的消息
+D̃_ii = Σ_j Ã_ij            加自环后的节点度数
+S = D̃^(-1/2) Ã D̃^(-1/2)   对称归一化的传播矩阵
+H^(l+1) = σ(S H^l W^l)      聚合 → 线性变换 → 非线性
+</code></pre>
+<p>I 是单位矩阵；W 是训练得到的共享参数；σ 在隐藏层常用 ReLU，把负值变为零。<strong>S 由图决定，W 通过标签监督学习。</strong> 不同层的 W 一般不同。对于 F 个输入特征、d 个输出特征，H 为 N×F，W 为 F×d，结果是 N×d。</p>
+<p>具体看一条三节点链 A—B—C，加自环后度数是 2、3、2。在一个标量特征上，A 的新状态在变换前为：</p>
+<pre><code class="language-text">z_A = (1/2) x_A + (1/√6) x_B
+</code></pre>
+<p>如果 x_A=1、x_B=2，那么 z_A≈1.3165。注意两个权重相加不等于 1，<strong>对称归一化不是普通邻居平均</strong>。它同时按发送者和接收者的度数缩放。Demo 的 <code>normalize()</code> 与此一致；测试另用两节点连接加孤立节点验证归一化，自环也让孤立节点避免除零。</p>
+<p>两层节点分类器可以写成 <code>logits = S · ReLU(S · X · W0) · W1</code>。logits 是未经 softmax 的分类分数。训练时只取有训练标签的行计算交叉熵；反向传播经过线性层和聚合操作，更新 W0、W1。Demo 使用无偏置 Linear、隐藏层 dropout、Adam 和权重衰减，是教学实现，不是原论文超参数与数据集的完整复现。</p>
+<h2 id="04">04 · 三种任务，三种输出</h2>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>输入与输出</th>
+<th>常见评估与注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>节点分类</td>
+<td>一张图，每个节点预测一个类别</td>
+<td>Accuracy、Macro-F1；划分训练/验证/测试节点</td>
+</tr>
+<tr>
+<td>边预测</td>
+<td>给定两个节点，判断连接概率或关系类型</td>
+<td>AUC、AP、排名指标；隔离待预测边与负样本，防止图泄漏</td>
+</tr>
+<tr>
+<td>图分类/回归</td>
+<td>每张图预测一个性质</td>
+<td>分类指标或 MAE/RMSE；对节点作 readout；按整个图划分数据</td>
+</tr>
+</tbody>
+</table>
+<p>本 Demo 只实现第一类。分子性质通常属于第三类；推荐常使用节点嵌入与边/排序目标；天气模型常预测节点上的连续物理量。把一张图的节点准确率直接解释成“推荐效果”或“物理仿真精度”没有意义。</p>
+<p>另一个重要区别是学习设定。<strong>传导式</strong>允许训练时看到同一图中测试节点的特征与边，但看不到测试标签；<strong>归纳式</strong>要求泛化到训练没见过的新节点或新图。GraphSAGE 是理解后一设定的重要入口。本 Demo 是传导式，不能据此宣称能直接泛化到新图。[graphsage2017]</p>
+<h2 id="05">05 · 历史脉络：每篇论文解决了什么</h2>
+<p>这条时间线是有选择的阅读路线，不是 GNN 的完整起源史。更早的递归神经网络、图核与化学图学习也影响了该领域。年份以主要发表年份为主；预印本可能更早，例如 GCN 为 2016 预印本 / 2017 ICLR，GAT 为 2017 / 2018，GraphCast 为 2022 / 2023。</p>
+<p>原始论文的完整时间线见 <a href="../source/paper-index.md">论文索引</a>，包括起源、谱卷积、消息传递、表达力、几何学习和应用。</p>
+<div class="timeline"><div class="milestone"><span class="year">2009</span><b>scarselli2009</b><p>递归状态与固定点，理解现代消息传递之前的GNN</p></div><div class="milestone"><span class="year">2016</span><b>chebnet2016</b><p>多项式近似带来局部化与高效计算</p></div><div class="milestone"><span class="year">2017</span><b>gcn2017</b><p>最适合入门复现的归一化邻居聚合</p></div><div class="milestone"><span class="year">2017</span><b>mpnn2017</b><p>用消息、聚合、更新统一多类模型</p></div><div class="milestone"><span class="year">2017</span><b>graphsage2017</b><p>邻居采样与归纳学习，面向大图和新节点</p></div><div class="milestone"><span class="year">2018</span><b>gat2018</b><p>学习不同邻居的重要性</p></div><div class="milestone"><span class="year">2019</span><b>gin2019</b><p>表达能力与Weisfeiler-Lehman测试的联系</p></div><div class="milestone"><span class="year">2021</span><b>egnn2021</b><p>几何变换下保持等变，适配空间结构</p></div><div class="milestone"><span class="year">2022</span><b>graphgps2022</b><p>局部消息传递、全局注意力与位置结构编码结合</p></div></div>
+
+<p>建议顺序：<strong>GCN → MPNN → GraphSAGE → GAT → GIN</strong>。再按兴趣分流：推荐看 PinSage/LightGCN，知识图谱看 R-GCN，三维结构看 EGNN，天气看 GraphCast，局部与全局结合看 GraphGPS。读原文时先回答“图如何构建、输入/输出是什么、消息怎样传播、评估怎样划分”，再追细节。</p>
+<h3 id="_1">五篇必读，带着问题读</h3>
+<ul>
+<li><strong>GCN</strong>：看式 (2) 和实验设定。为什么加入自环？为什么同一个矩阵 S 在每一层出现？哪些节点标签真正进入损失？</li>
+<li><strong>MPNN</strong>：看消息传递阶段与 readout。你能否把某个具体 GNN 写成消息、聚合、更新和读出四步？</li>
+<li><strong>GraphSAGE</strong>：看采样与聚合流程。参数学的是节点 ID，还是一套可复用的邻居聚合函数？新节点还需要哪些特征与邻接信息？</li>
+<li><strong>GAT</strong>：看注意力系数与多头结构。普通局部 GAT 的邻居集合仍由图给定；学权重不意味着自动发现所有缺失边，也不保证权重就是因果解释。</li>
+<li><strong>GIN</strong>：看可区分性与聚合器条件。求均值可能混淆什么不同邻居集合？论文的表达力结论依赖假设，不能扩展成“所有图都可区分”。</li>
+</ul>
+<h2 id="06">06 · 应用情况：部署证据与研究价值分开看</h2>
+<p>以下是截至核查日可溯源的代表案例，不是市场份额统计或全行业清单。历史部署证明了可行性，不自动证明 2026 年仍运行同一版本。逐条核验记录与限制见 <a href="../content/fact-check.md">应用事实核查</a>。</p>
+<table>
+<thead>
+<tr>
+<th>领域</th>
+<th>如何建图、预测什么</th>
+<th>证据层级与适用边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>推荐与内容检索</td>
+<td>用户/物品/收藏板为节点，交互为边，学习物品嵌入用于召回或排序</td>
+<td>PinSage 2018 论文报告 Pinterest 生产部署；MultiBiSage 2022 报告多关系图研究。未核实 2026 线上架构；不能把后者离线结果说成全面上线</td>
+</tr>
+<tr>
+<td>交通与 ETA</td>
+<td>路段及连接关系形成图，结合时空特征预测行程时间</td>
+<td>Google/DeepMind 2020 官方材料有产品部署证据；属于历史验证，当前具体模型架构待确认</td>
+</tr>
+<tr>
+<td>天气预测</td>
+<td>大气状态放在网格与多尺度网格图上，预测下一时刻状态并滚动推进</td>
+<td>GraphCast 2023 是重要科研里程碑；Google 当前文档写 WeatherNext Graph 已弃用，ECMWF 新公告也停止对应外部模型实时运行。代码/模型研究价值与当前服务状态须分开</td>
+</tr>
+<tr>
+<td>材料发现</td>
+<td>原子与近邻关系形成晶体图，预测候选性质，配合 DFT 再验证</td>
+<td>GNoME 2023 论文与 Materials Project 数据库版本记录支持科研及数据资产用途；计算稳定不等于一定可合成，更不等于已量产</td>
+</tr>
+<tr>
+<td>分子性质与几何学习</td>
+<td>原子、键、空间距离；预测能量、性质或坐标更新</td>
+<td>MPNN、EGNN 是方法与基准验证证据；不能把基准效果直接写成药物获批或临床收益</td>
+</tr>
+<tr>
+<td>知识图谱</td>
+<td>实体为节点，多种关系为有类型的边</td>
+<td>R-GCN 支持实体分类、链路预测研究；图数据库、GraphRAG 本身不必然使用 GNN</td>
+</tr>
+</tbody>
+</table>
+<p>无线、反欺诈、电网等也有自然的图建模问题，但此包不据此宣称已具备本部门落地效果。若迁移到通信：先定义节点是用户/小区/天线中的哪一种，边是连接还是干扰，标签来自仿真还是测量，推理时能看到哪些信息；再与传统算法比较时延、算力、约束满足率和分布外表现。这里是教学类比，<strong>不是 AI-RAN 业务线的事实或收益结论</strong>。</p>
+<h2 id="07">07 · 哪些问题仍然难</h2>
+<p><strong>相连不等于相似。</strong> 社交朋友可能相似，交易双方或不同类型设备却可能天然不同。邻居类别相似叫同配，反之叫异配。直接平均在异配图上可能破坏有用信号。用 Demo 把 <code>--p-in</code> 降到接近 <code>--p-out</code>，观察优势是否消失。[heterophily2020]</p>
+<p><strong>更深不保证更强。</strong> 反复传播可能让节点表示越来越难区分，称为过平滑。在对称归一化下，极限还与节点度有关，并不一定是所有原始数值完全相等。另一个问题是过挤压：大量远处的信息经少量路径被挤进固定长度向量。两者不是同一问题；单纯加层并不能解决。[oversmoothing2018、bottleneck2021]</p>
+<p><strong>图也会过时或泄漏答案。</strong> 随机划分能回答“同图中缺少标签的节点能否补全”，却不等于能预测未来。真实业务应考虑时间划分、重复实体、未来边、训练后才出现的特征，以及训练与线上建图规则一致性。</p>
+<p><strong>计算受图结构限制。</strong> 教学代码使用稠密 N×N 矩阵，存储约为 O(N²)，是为了让公式清楚。真实大图需要稀疏矩阵、邻居采样、mini-batch 与离线嵌入刷新等工程手段。GraphSAGE 和 PinSage 值得在这一步读。GAT 的自适应权重、几何等变网络的空间约束、GraphGPS 的全局注意力都是不同的设计选择，不是一条“新模型全面替代旧模型”的线性路线。</p>
+<h2 id="08">08 · 自己训练：观察关系的作用</h2>
+<p>数据完全由本地随机数生成，无需账号、数据集下载或 GPU。图包含 3 个社区、每类 60 个节点，共 180 个节点，每节点 16 维特征。默认社区内连接概率 0.18，社区间 0.015，特征含高斯噪声。类别参与合成特征与图结构的生成，制造可控制的学习问题；真实业务不能使用未知目标标签建图。</p>
+<p>每类训练/验证/测试节点为 8/12/40，因此总计 24/36/120。特征标准化只拟合训练节点。训练时允许看到全图特征与边；只有训练标签进入梯度。验证标签用于选取最小验证损失的 checkpoint；测试指标在该 checkpoint 选好后计算一次。三个随机种子同时改变数据、划分与初始化，所以这里的标准差混合了三种随机性，不是单纯优化器不确定性。</p>
+<table>
+<thead>
+<tr>
+<th>实验</th>
+<th>传播操作</th>
+<th>你在检验什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GCN</td>
+<td>使用真实图的 S</td>
+<td>有效邻域能否帮助消除特征噪声</td>
+</tr>
+<tr>
+<td>MLP</td>
+<td>使用单位矩阵 I</td>
+<td>不看边，仅凭本节点属性能做到什么程度</td>
+</tr>
+<tr>
+<td>No edges</td>
+<td>删掉所有邻居边，只保留自环</td>
+<td>在本实现中应与 MLP 完全一致，是实现一致性检查</td>
+</tr>
+<tr>
+<td>Shuffled</td>
+<td>对 A 的行列作同一随机置换，X 与标签不变</td>
+<td>保留边数、图拓扑与度分布，破坏图和节点属性/类别的对应关系；不保证逐节点度数保持</td>
+</tr>
+</tbody>
+</table>
+<p>这里 MLP 与 GCN 使用相同宽度、层数、无偏置线性层、dropout、优化器和初始化种子；MLP 通过传播矩阵 I 实现。No edges 与 MLP 不是两项独立方法，它们相等正是预期行为。该对照说明特定构造的数据依赖哪些信息，不构成真实基准排名。</p>
+<div id="experiment-results"></div>
+
+<h3 id="_2">反例也跑一遍：边没有社区线索时</h3>
+<p>已用相同三个种子实际运行 <code>p_in=p_out=0.06</code>。GCN 测试准确率均值为 <strong>40.8%</strong>（样本标准差 4.6 个百分点），MLP 为 <strong>49.7%</strong>。图结构不再提供类别聚集线索时，聚合可能混入无关邻居，GCN 的优势消失。这比只看默认图上的 100% 更能说明方法的适用边界。</p>
+<p><a href="../outputs/no-community/results.json">负对照完整结果</a>与<a href="../outputs/no-community/experiment.png">实验图</a>一并保留；不同条件都没有用测试集选 checkpoint，但这些固定合成实验仍不构成真实业务结论。</p>
+<h3 id="_3">从仓库根目录运行</h3>
+<pre><code class="language-sh">uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -r demo/requirements.txt
+.venv/bin/python demo/train.py --out outputs
+.venv/bin/python -m unittest discover -s demo -p 'test_*.py'
+</code></pre>
+<p>如果没有 uv，可以用 Python 3.12 的 <code>python3.12 -m venv</code>，再用该环境的 <code>python -m pip install</code>。依赖首次安装需要网络，训练和阅读无需外部服务。</p>
+<p>评估已保存权重（仅加载自己生成或可信的 checkpoint）：</p>
+<pre><code class="language-sh">.venv/bin/python demo/train.py \
+  --evaluate outputs/gcn-7.pt --out outputs/re-evaluation
+</code></pre>
+<h3 id="_4">四个有解释力的练习</h3>
+<ol>
+<li><strong>边不再提供类别线索</strong>：<code>--p-in 0.06 --p-out 0.06 --out outputs/no-community</code>。不要预设 GCN 一定胜过 MLP；关注多种子均值与波动。</li>
+<li><strong>增加特征噪声</strong>：<code>--noise 2.5 --out outputs/noisy</code>。图仍可靠时，比较邻居聚合的价值。</li>
+<li><strong>增加深度</strong>：<code>--layers 8 --out outputs/deep</code>。本模型无残差，深度可能增加平滑与优化困难；不能只凭准确率下降就断言唯一原因是过平滑。</li>
+<li><strong>去掉 dropout</strong>：<code>--dropout 0 --out outputs/no-dropout</code>。比较训练与验证曲线，讨论过拟合。</li>
+</ol>
+<p>上面命令的参数需接在 <code>.../demo/train.py</code> 后；输出路径分别保留，避免覆盖默认参考结果。也可用 <code>--seeds 7 17 27 37 47</code> 扩大实验。更严格的后续实验应固定数据与划分，只改变模型初始化；再换新图评估归纳能力。学习包没有宣称完成 Cora 等真实数据集复现。</p>
+<h2 id="09">09 · 代码、结果和原文如何对照</h2>
+<ul>
+<li><code>demo/train.py</code>：<code>make_graph()</code> 构造数据与划分；<code>normalize()</code> 实现 S；<code>Network.forward()</code> 对应公式；<code>fit()</code> 分开训练损失、验证选模与测试评估。</li>
+<li><code>demo/test_train.py</code>：覆盖手算归一化、孤立节点、节点排列等变、数据划分、标签隔离、退化到 MLP、训练与 checkpoint 重载，以及非法输入。</li>
+<li><code>outputs/</code>：每个模型/种子的 <code>.pt</code> 权重、逐 epoch CSV、<code>results.json</code> 指标与混淆矩阵、<code>experiment.png/.svg</code> 图。<code>best_epoch</code> 可以定位实际使用的轮次。</li>
+<li><code>source/manifest.json</code>：原始文件来源、实际下载 URL、时间、字节数、SHA-256、PDF 页数、版本标记与首页文本。它证明下载内容可追踪，<strong>SHA-256 本身不是作者身份认证</strong>。</li>
+<li><code>source/catalog.json</code>：阅读路线的结构化索引。原文未经改写；Scarselli 2009 下载自学术镜像，保留 DOI 与机构记录用于核对，不冒称出版社原版托管。</li>
+</ul>
+<h2 id="_5">参考资料</h2>
+<p>下面的索引同时指向官方记录与本地原始 PDF。Gori 2005 的机构记录限制全文访问，本包保留记录并明确缺失；没有用非原文摘要替代 PDF。论文版权归各权利人，此目录用于个人研究与学习；公开再分发前需逐篇核对许可。</p>
+<p>完整书目与本地 PDF 入口见 <a href="../source/paper-index.md">原始论文索引</a>。</p>
+<div class="table-wrap"><table class="references"><thead><tr><th>ID / 年份</th><th>原始论文与阅读目的</th><th>原始记录 / PDF</th></tr></thead><tbody>
+<tr id="ref-gori2005"><td>gori2005<br>2005 · IJCNN</td><td><strong>A new model for learning in graph domains</strong><br>Gori, Monfardini, Scarselli<br>早期图域学习模型；追溯起点，全文受限</td><td><a href="https://doi.org/10.1109/IJCNN.2005.1555942">官方记录 / DOI</a><br>全文未取得：保留原始记录</td></tr>
+<tr id="ref-scarselli2009"><td>scarselli2009<br>2009 · IEEE TNN</td><td><strong>The Graph Neural Network Model</strong><br>Scarselli et al.<br>递归状态与固定点，理解现代消息传递之前的GNN</td><td><a href="https://doi.org/10.1109/TNN.2008.2005605">官方记录 / DOI</a><br><a href="../source/papers/scarselli2009.pdf">本地原始 PDF · 20 页</a></td></tr>
+<tr id="ref-bruna2014"><td>bruna2014<br>2014 · ICLR</td><td><strong>Spectral Networks and Deep Locally Connected Networks on Graphs</strong><br>Bruna et al.<br>把卷积推广到图的谱域</td><td><a href="https://arxiv.org/abs/1312.6203">官方记录 / DOI</a><br><a href="../source/papers/bruna2014.pdf">本地原始 PDF · 14 页</a></td></tr>
+<tr id="ref-chebnet2016"><td>chebnet2016<br>2016 · NeurIPS</td><td><strong>Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering</strong><br>Defferrard, Bresson, Vandergheynst<br>多项式近似带来局部化与高效计算</td><td><a href="https://arxiv.org/abs/1606.09375">官方记录 / DOI</a><br><a href="../source/papers/chebnet2016.pdf">本地原始 PDF · 9 页</a></td></tr>
+<tr id="ref-gcn2017"><td>gcn2017<br>2017 · ICLR</td><td><strong>Semi-Supervised Classification with Graph Convolutional Networks</strong><br>Kipf and Welling<br>最适合入门复现的归一化邻居聚合</td><td><a href="https://arxiv.org/abs/1609.02907">官方记录 / DOI</a><br><a href="../source/papers/gcn2017.pdf">本地原始 PDF · 14 页</a></td></tr>
+<tr id="ref-mpnn2017"><td>mpnn2017<br>2017 · ICML</td><td><strong>Neural Message Passing for Quantum Chemistry</strong><br>Gilmer et al.<br>用消息、聚合、更新统一多类模型</td><td><a href="https://arxiv.org/abs/1704.01212">官方记录 / DOI</a><br><a href="../source/papers/mpnn2017.pdf">本地原始 PDF · 14 页</a></td></tr>
+<tr id="ref-graphsage2017"><td>graphsage2017<br>2017 · NeurIPS</td><td><strong>Inductive Representation Learning on Large Graphs</strong><br>Hamilton, Ying, Leskovec<br>邻居采样与归纳学习，面向大图和新节点</td><td><a href="https://arxiv.org/abs/1706.02216">官方记录 / DOI</a><br><a href="../source/papers/graphsage2017.pdf">本地原始 PDF · 19 页</a></td></tr>
+<tr id="ref-gat2018"><td>gat2018<br>2018 · ICLR</td><td><strong>Graph Attention Networks</strong><br>Velickovic et al.<br>学习不同邻居的重要性</td><td><a href="https://arxiv.org/abs/1710.10903">官方记录 / DOI</a><br><a href="../source/papers/gat2018.pdf">本地原始 PDF · 12 页</a></td></tr>
+<tr id="ref-rgcn2018"><td>rgcn2018<br>2018 · ESWC</td><td><strong>Modeling Relational Data with Graph Convolutional Networks</strong><br>Schlichtkrull et al.<br>区分边类型，适配知识图谱</td><td><a href="https://arxiv.org/abs/1703.06103">官方记录 / DOI</a><br><a href="../source/papers/rgcn2018.pdf">本地原始 PDF · 9 页</a></td></tr>
+<tr id="ref-pinsage2018"><td>pinsage2018<br>2018 · KDD</td><td><strong>Graph Convolutional Neural Networks for Web-Scale Recommender Systems</strong><br>Ying et al.<br>工业推荐中的采样、训练与离线推理</td><td><a href="https://arxiv.org/abs/1806.01973">官方记录 / DOI</a><br><a href="../source/papers/pinsage2018.pdf">本地原始 PDF · 10 页</a></td></tr>
+<tr id="ref-gn2018"><td>gn2018<br>2018 · arXiv</td><td><strong>Relational inductive biases, deep learning, and graph networks</strong><br>Battaglia et al.<br>节点、边、全局状态与关系归纳偏置</td><td><a href="https://arxiv.org/abs/1806.01261">官方记录 / DOI</a><br><a href="../source/papers/gn2018.pdf">本地原始 PDF · 40 页</a></td></tr>
+<tr id="ref-gin2019"><td>gin2019<br>2019 · ICLR</td><td><strong>How Powerful are Graph Neural Networks?</strong><br>Xu et al.<br>表达能力与Weisfeiler-Lehman测试的联系</td><td><a href="https://arxiv.org/abs/1810.00826">官方记录 / DOI</a><br><a href="../source/papers/gin2019.pdf">本地原始 PDF · 17 页</a></td></tr>
+<tr id="ref-oversmoothing2018"><td>oversmoothing2018<br>2018 · AAAI</td><td><strong>Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning</strong><br>Li, Han, Wu<br>拉普拉斯平滑视角与过平滑</td><td><a href="https://arxiv.org/abs/1801.07606">官方记录 / DOI</a><br><a href="../source/papers/oversmoothing2018.pdf">本地原始 PDF · 9 页</a></td></tr>
+<tr id="ref-lightgcn2020"><td>lightgcn2020<br>2020 · SIGIR</td><td><strong>LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation</strong><br>He et al.<br>推荐任务中简化传播层的例子</td><td><a href="https://arxiv.org/abs/2002.02126">官方记录 / DOI</a><br><a href="../source/papers/lightgcn2020.pdf">本地原始 PDF · 10 页</a></td></tr>
+<tr id="ref-heterophily2020"><td>heterophily2020<br>2020 · NeurIPS</td><td><strong>Beyond Homophily in Graph Neural Networks: Current Limitations and Effective Designs</strong><br>Zhu et al.<br>异配图挑战：相邻未必同类</td><td><a href="https://arxiv.org/abs/2006.11468">官方记录 / DOI</a><br><a href="../source/papers/heterophily2020.pdf">本地原始 PDF · 30 页</a></td></tr>
+<tr id="ref-bottleneck2021"><td>bottleneck2021<br>2021 · ICLR</td><td><strong>On the Bottleneck of Graph Neural Networks and its Practical Implications</strong><br>Alon and Yahav<br>远距离信息压缩与过挤压</td><td><a href="https://arxiv.org/abs/2006.05205">官方记录 / DOI</a><br><a href="../source/papers/bottleneck2021.pdf">本地原始 PDF · 16 页</a></td></tr>
+<tr id="ref-egnn2021"><td>egnn2021<br>2021 · ICML</td><td><strong>E(n) Equivariant Graph Neural Networks</strong><br>Satorras, Hoogeboom, Welling<br>几何变换下保持等变，适配空间结构</td><td><a href="https://arxiv.org/abs/2102.09844">官方记录 / DOI</a><br><a href="../source/papers/egnn2021.pdf">本地原始 PDF · 16 页</a></td></tr>
+<tr id="ref-graphgps2022"><td>graphgps2022<br>2022 · NeurIPS</td><td><strong>Recipe for a General, Powerful, Scalable Graph Transformer</strong><br>Rampasek et al.<br>局部消息传递、全局注意力与位置结构编码结合</td><td><a href="https://arxiv.org/abs/2205.12454">官方记录 / DOI</a><br><a href="../source/papers/graphgps2022.pdf">本地原始 PDF · 27 页</a></td></tr>
+<tr id="ref-graphcast2023"><td>graphcast2023<br>2023 · Science</td><td><strong>Learning skillful medium-range global weather forecasting</strong><br>Lam et al.<br>多尺度图上的全球天气预测</td><td><a href="https://arxiv.org/abs/2212.12794">官方记录 / DOI</a><br><a href="../source/papers/graphcast2023.pdf">本地原始 PDF · 102 页</a></td></tr>
+<tr id="ref-gnome2023"><td>gnome2023<br>2023 · Nature</td><td><strong>Scaling deep learning for materials discovery</strong><br>Merchant et al.<br>GNN筛选与DFT验证的材料发现闭环</td><td><a href="https://doi.org/10.1038/s41586-023-06735-9">官方记录 / DOI</a><br><a href="../source/papers/gnome2023.pdf">本地原始 PDF · 11 页</a></td></tr>
+<tr id="ref-multibisage2022"><td>multibisage2022<br>2022 · KDD</td><td><strong>MultiBiSage: A Web-Scale Recommendation System Using Multiple Bipartite Graphs at Pinterest</strong><br>Gurukar et al.<br>多种关系图用于推荐系统</td><td><a href="https://arxiv.org/abs/2205.10666">官方记录 / DOI</a><br><a href="../source/papers/multibisage2022.pdf">本地原始 PDF · 10 页</a></td></tr>
+</tbody></table></div></article></div>
+<footer>原文资料与可复现代码保存在本地学习包中。研究/部署/当前服务状态分开表述。<br>图形、讲解与教学实验为本学习包原创整理；论文版权归原权利人。</footer>
+<script src="results.js"></script>
+<script>
+const lab = document.getElementById('interactive-lab');
+lab.innerHTML = `<section class="lab" aria-label="交互式消息传递实验"><div class="lab-top"><h3>亲手传播一条消息</h3><p>点节点，查看它收到什么；逐层传播，观察信息怎样到达远处。</p></div><div class="lab-body"><div><svg class="graph" id="graph" viewBox="0 0 410 300" aria-label="六个节点的可交互图"></svg><div class="controls"><button id="prev" aria-label="上一层">←</button><strong id="layer-label"></strong><button id="next" aria-label="下一层">下一层 →</button><button id="reset">重置</button></div><div class="controls"><label>传播层数 <input id="depth" type="range" min="0" max="8" value="0"></label><label>归一化 <select id="normalization"><option value="gcn">GCN 对称归一化</option><option value="mean">普通均值</option></select></label></div><div class="controls"><label><input type="checkbox" id="self" checked> 自环</label><label><input type="checkbox" id="bridge" checked> 保留 C—E 边</label></div></div><div class="explain" id="explanation" aria-live="polite"></div></div><div class="lab-foot">这里隔离演示传播矩阵：单一标量特征，W=1，σ=恒等函数，没有监督训练。下方 PyTorch Demo 才包含可学习权重、非线性与反向传播。颜色表示当前特征数值，不表示类别或准确率。</div></section>`;
+const pts = [[75,65],[205,38],[65,220],[337,80],[205,258],[340,228]];
+const baseEdges = [[0,1],[0,2],[1,3],[2,4],[3,5],[4,5]];
+const initial = [1,0,0,0,1,0];
+let selected=0;
+const ns='http://www.w3.org/2000/svg';
+function element(tag, attrs){const e=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);return e;}
+function state(){
+  const depth=Number(document.getElementById('depth').value);
+  const self=document.getElementById('self').checked;
+  const edges=baseEdges.filter(([a,b])=>document.getElementById('bridge').checked || !(a===2&&b===4));
+  const A=Array.from({length:6},()=>Array(6).fill(0));for(const[a,b]of edges){A[a][b]=1;A[b][a]=1;}if(self)for(let i=0;i<6;i++)A[i][i]=1;
+  const d=A.map(row=>row.reduce((a,b)=>a+b,0));
+  const mode=document.getElementById('normalization').value;
+  const S=A.map((row,i)=>row.map((v,j)=>v?(mode==='gcn'?1/Math.sqrt(d[i]*d[j]):1/d[i]):0));
+  let h=initial.slice(), previous=h.slice();
+  for(let l=0;l<depth;l++){previous=h.slice();h=S.map(row=>row.reduce((sum,w,j)=>sum+w*previous[j],0));}
+  return{depth,edges,A,d,S,h,previous,mode};
+}
+function render(){
+ const s=state(), svg=document.getElementById('graph');svg.replaceChildren();
+ for(const[a,b]of s.edges)svg.append(element('line',{x1:pts[a][0],y1:pts[a][1],x2:pts[b][0],y2:pts[b][1],class:'edge'+((a===selected||b===selected)?' active':'')}));
+ s.h.forEach((value,i)=>{const g=element('g',{class:'node'+(selected===i?' chosen':''),role:'button',tabindex:'0','aria-label':`选择节点 ${String.fromCharCode(65+i)}`});const v=Math.min(1,Math.max(0,value));g.append(element('circle',{cx:pts[i][0],cy:pts[i][1],r:29,fill:`hsl(155 30% ${94-v*57}%)`}));const t=element('text',{x:pts[i][0],y:pts[i][1]-3,'text-anchor':'middle',fill:v>.6?'white':'#17302f'});t.textContent=String.fromCharCode(65+i);g.append(t);const n=element('text',{x:pts[i][0],y:pts[i][1]+15,'text-anchor':'middle',class:'number',fill:v>.6?'white':'#17302f'});n.textContent=value.toFixed(3);g.append(n);g.addEventListener('click',()=>{selected=i;render()});g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selected=i;render();document.querySelectorAll('.node')[i].focus();}});svg.append(g);});
+ document.getElementById('layer-label').textContent=`第 ${s.depth} 层 / 8`;
+ document.getElementById('prev').disabled=s.depth===0;document.getElementById('next').disabled=s.depth===8;
+ const rows=s.S[selected].map((w,j)=>w?`<tr><td>${String.fromCharCode(65+j)}${j===selected?'（自己）':''}</td><td>${w.toFixed(4)}</td><td>${s.previous[j].toFixed(4)}</td><td>${(w*s.previous[j]).toFixed(4)}</td></tr>`:'').join('');
+ document.getElementById('explanation').innerHTML=`<h4>节点 ${String.fromCharCode(65+selected)} · ${s.depth===0?'初始状态':'接收邻居消息'}</h4><p>${s.depth===0?'A 与 E 初值为 1，其余为 0。这些是输入特征，不是标签。按“下一层”开始。':'表内上一层值乘传播权重，再相加，得到当前状态。所有节点同时更新，不按点击顺序更新。'}</p><div class="equation">h${s.depth}(${String.fromCharCode(65+selected)}) = <b id="node-output">${s.h[selected].toFixed(4)}</b></div>${s.depth>0?`<table><thead><tr><th>来源</th><th>权重</th><th>上一层</th><th>贡献</th></tr></thead><tbody>${rows}</tbody></table>`:''}<p class="small">${s.mode==='gcn'?'GCN：权重 = 1/√(dᵢdⱼ)，不一定加起来等于 1。':'均值：权重 = 1/dᵢ，每个接收节点对其邻域求平均。'} ${s.depth>1?'传播多层后可接触多跳信息；有限维聚合也可能丢失差异。':''}</p>`;
+}
+for(const id of ['depth','self','bridge','normalization'])document.getElementById(id).addEventListener('input',render);
+for(const [id,step]of[['next',1],['prev',-1]])document.getElementById(id).onclick=()=>{document.getElementById('depth').value=Number(document.getElementById('depth').value)+step;render();};
+document.getElementById('reset').onclick=()=>{document.getElementById('depth').value=0;document.getElementById('self').checked=true;document.getElementById('bridge').checked=true;document.getElementById('normalization').value='gcn';selected=0;render();};render();
+const results=document.getElementById('experiment-results');
+if(window.GNN_RESULTS){const r=window.GNN_RESULTS;results.innerHTML=`<section class="results"><div class="eyebrow">ACTUAL RUN / ${r.seeds.length} SEEDS / CPU</div><h3>看见结构带来的差异</h3><div class="result-summary">${Object.entries(r.summary).map(([name,m])=>`<div class="metric">${name}<b>${(m.accuracy.mean*100).toFixed(1)}%</b><span>测试均值 ± ${m.accuracy.std===null?'—':(m.accuracy.std*100).toFixed(1)} pp</span></div>`).join('')}</div><p class="small">种子 ${r.seeds.join(' / ')}；标准差为样本标准差。Macro-F1 与逐类混淆矩阵见下表及 results.json。</p><table><thead><tr><th>模型</th><th>Accuracy 均值</th><th>Macro-F1 均值</th></tr></thead><tbody>${Object.entries(r.summary).map(([name,m])=>`<tr><td>${name}</td><td>${m.accuracy.mean.toFixed(4)}</td><td>${m.macro_f1.mean.toFixed(4)}</td></tr>`).join('')}</tbody></table><img src="experiment.png" alt="验证损失、测试准确率、输入与GCN隐藏表示的PCA图"><p class="small">图为第一个种子。PCA 颜色来自真实类别，仅用于可视化，不作为额外模型输入。</p><label>查看测试混淆矩阵 <select id="confusion-select">${r.results.map((v,i)=>`<option value="${i}">${v.name} / seed ${v.seed}</option>`).join('')}</select></label><div id="confusion-matrix" class="confusion"></div><div class="caution">100% 来自刻意设置为同配的简单合成数据。它用于解释机制，不能推断真实数据集或业务收益。当前展示的实验配置：${r.config.layers} 层，p_in=${r.config.p_in}，p_out=${r.config.p_out}，noise=${r.config.noise}。</div><p><a href="results.json">完整指标 JSON</a> · <a href="experiment.svg">矢量图 SVG</a> · <a href="../demo/train.py">训练源码</a></p></section>`;const show=()=>{const v=r.results[Number(document.getElementById('confusion-select').value)];document.getElementById('confusion-matrix').innerHTML=`<p class="small">行 = 真实类别；列 = 预测类别。选中验证损失最小的第 ${v.best_epoch} 轮。</p><table><thead><tr><th>真实 / 预测</th><th>0</th><th>1</th><th>2</th></tr></thead><tbody>${v.confusion.map((row,i)=>`<tr><th>${i}</th>${row.map(n=>`<td>${n}</td>`).join('')}</tr>`).join('')}</tbody></table>`;};document.getElementById('confusion-select').onchange=show;show();}
+else results.innerHTML='<p>未找到 results.js；请先运行训练 Demo。</p>';
+</script>
+</body></html>

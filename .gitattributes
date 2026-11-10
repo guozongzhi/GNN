@@ -1,0 +1,6 @@
+# Preserve downloaded evidence byte-for-byte, including original whitespace.
+source/pages/** -text -diff -whitespace
+source/papers/** -text -diff
+# Matplotlib emits valid SVG path lines with trailing spaces.
+*.svg -whitespace
+*.csv text eol=lf

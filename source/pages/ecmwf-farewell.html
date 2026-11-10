@@ -1,0 +1,879 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+  <head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-P5T597');</script>
+    <!-- End Google Tag Manager -->
+
+    <meta charset="utf-8" />
+<meta name="description" content="The upgrade to IFS Cycle 50r1 highlights limitations in externally developed ML models, prompting a discontinuation of their real-time use." />
+<link rel="canonical" href="https://www.ecmwf.int/en/about/media-centre/aifs-blog/2026/farewell-external-ai-models" />
+<link rel="shortlink" href="https://www.ecmwf.int/node/34355" />
+<meta name="generator" content="Drupal 9 (http://drupal.org)" />
+<meta property="og:site_name" content="ECMWF" />
+<meta property="og:type" content="Website" />
+<meta property="og:url" content="https://www.ecmwf.int/en/about/media-centre/aifs-blog/2026/farewell-external-ai-models" />
+<meta property="og:title" content="Farewell to the external AI models" />
+<meta property="og:description" content="The upgrade to IFS Cycle 50r1 highlights limitations in externally developed ML models, prompting a discontinuation of their real-time use." />
+<meta property="og:updated_time" content="2026-05-11T12:10:43+00:00" />
+<meta name="dcterms.title" content="Farewell to the external AI models" />
+<meta name="dcterms.description" content="The upgrade to IFS Cycle 50r1 highlights limitations in externally developed ML models, prompting a discontinuation of their real-time use." />
+<meta name="dcterms.date" content="2026-05-07T13:11+00:00" />
+<meta name="dcterms.type" content="Text" />
+<meta name="dcterms.format" content="text/html" />
+<meta name="dcterms.identifier" content="https://www.ecmwf.int/en/about/media-centre/aifs-blog/2026/farewell-external-ai-models" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Farewell to the external AI models" />
+<meta name="twitter:description" content="The upgrade to IFS Cycle 50r1 highlights limitations in externally developed ML models, prompting a discontinuation of their real-time use." />
+<meta name="twitter:site" content="@ecmwf" />
+<meta name="twitter:creator" content="@ecmwf" />
+<meta name="twitter:image" content="https://www.ecmwf.int/sites/default/files/2026-05/Farewell-external-AI-models-banner.png" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@id": "https://www.ecmwf.int/en/about/media-centre/aifs-blog/2026/farewell-external-ai-models",
+            "description": "The upgrade to IFS Cycle 50r1 highlights limitations in externally developed ML models, prompting a discontinuation of their real-time use.",
+            "author": {
+                "@type": "Organization",
+                "@id": "ECMWF",
+                "name": "European Centre for Medium-Range Weather Forecasts",
+                "url": "https://www.ecmwf.int"
+            },
+            "isAccessibleForFree": "True"
+        }
+    ]
+}</script>
+<link rel="icon" href="/sites/default/files/favicon.ico.production.ico" type="image/vnd.microsoft.icon" />
+<script>window.a2a_config=window.a2a_config||{};a2a_config.callbacks=[];a2a_config.overlays=[];a2a_config.templates={};var a2a_config = a2a_config || {};
+    a2a_config.callbacks = a2a_config.callbacks || [];
+    a2a_config.callbacks.push({
+        share: function(data) {
+            // Track shares in Google Analytics with Google Tag Manager
+            dataLayer.push({
+                'event': 'AddToAnyShare',
+                'socialNetwork': 'AddToAny',
+                'socialAction': data.service,
+                'socialTarget': data.url
+            });
+        }
+    });</script>
+
+    <title>Farewell to the external AI models | ECMWF</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_ahrrMVLkWQf_4rPI81x33d3GJzgmvNyWuO2mGG4-gHM.css?delta=0&amp;language=en&amp;theme=ecmwf&amp;include=eJw9jEEOwyAMBD9E8ZOQg5cIFXCE3ab5faMm6mU1e5hhEVceB_ENsUwdHha4YyZ8NjVIKrWd12jFwOQW8hNSXWfinHVK1UF_ugoYEpD7XmhtunB7mB-tjjX002S6gjHz5qcS7DBHp4UN4V2xG_02dpVXwxca1UC2" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_SwAz8zZOk9c7YhWKJiyGoMPPmanf1PMtdyCcVJqaAVM.css?delta=1&amp;language=en&amp;theme=ecmwf&amp;include=eJw9jEEOwyAMBD9E8ZOQg5cIFXCE3ab5faMm6mU1e5hhEVceB_ENsUwdHha4YyZ8NjVIKrWd12jFwOQW8hNSXWfinHVK1UF_ugoYEpD7XmhtunB7mB-tjjX002S6gjHz5qcS7DBHp4UN4V2xG_02dpVXwxca1UC2" />
+<link rel="stylesheet" media="print" href="/sites/default/files/css/css_AbMRdkqu8KAujx38oUCeSUjkFrO3eQ6p7yVweIe8ayY.css?delta=2&amp;language=en&amp;theme=ecmwf&amp;include=eJw9jEEOwyAMBD9E8ZOQg5cIFXCE3ab5faMm6mU1e5hhEVceB_ENsUwdHha4YyZ8NjVIKrWd12jFwOQW8hNSXWfinHVK1UF_ugoYEpD7XmhtunB7mB-tjjX002S6gjHz5qcS7DBHp4UN4V2xG_02dpVXwxca1UC2" />
+
+    
+  </head>
+  <!--
+
+  #######  ######  ##     ## ##       ## #######
+  ##      ##    ## ###   ### ##       ## ##
+  #####   ##       #### #### ##   #   ## #####
+  ##      ##    ## ## ### ##  ## ### ##  ##
+  #######  ######  ##  #  ##   ### ###   ##
+
+  European Centre for Medium-Range Weather Forecasts
+
+  (c)-->
+
+  <body class="layout-two-sidebars page__type__farewell-to-the-external-ai-models- path-node page-node-type-aifs-blog">
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P5T597"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+        <a href="#main-content" class="skip-link visually-hidden-focusable">
+      Skip to main content
+    </a>
+    
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+<div class="menu-collapse-overlay"></div>
+<header id="header" class="header w-100" role="banner">
+    <div class="ecmwf-header text-white">
+		<div class="ecmwf-top-header border-bottom">
+			<div class="container ecmwf-top-header___wrapper">
+				<div class="row">
+					<div class="col-lg-6 col-4 mobile justify-content-start">
+						<a id="btn-mobile"><span class="material-icons-outlined md-24">menu</span></a>
+						<a class="support navbar-toggle" href="/en/support"><span class="material-icons-outlined md-24">help_outline</span></a> 
+					</div>
+					
+					<div class="nav-brand col-lg-6 col-4 col-md-4">
+						    <div id="block-sitebranding" class="site-branding block block-system block-system-branding-block">
+  
+    
+        <a href="/" rel="home" class="site-logo">
+      <img class="logo" src="/themes/ecmwf/logo.svg" alt="Home" fetchpriority="high" />
+    </a>
+      </div>
+
+
+					</div>
+
+					<div class="nav-user col-lg-6 d-flex p-0 justify-content-end col-md-8">
+						    <div class="views-exposed-form bef-exposed-form block block-views block-views-exposed-filter-blocksearch-site-page-1" data-drupal-selector="views-exposed-form-search-site-page-1" id="block-exposedformsearch-sitepage-1-2">
+  
+    
+      <div class="content">
+      
+  <form action="/search/site" method="get" id="views-exposed-form-search-site-page-1" accept-charset="UTF-8">
+    <div class="js-form-item form-item js-form-type-textfield form-item-search-api-fulltext js-form-item-search-api-fulltext">
+      
+        <input placeholder="Search site..." data-drupal-selector="edit-search-api-fulltext" data-msg-maxlength="This field has a maximum length of 128." type="text" id="edit-search-api-fulltext" name="search_api_fulltext" value="" size="30" maxlength="128" class="form-control" />
+
+        </div>
+<div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions"><input data-drupal-selector="edit-submit-search-site" type="submit" id="edit-submit-search-site" value="Go" class="button js-form-submit form-submit form-control" />
+</div>
+
+
+  </form>
+
+    </div>
+  </div>
+
+<div class="header-menu float-start py-3 collapse" id="navbar-search" aria-expanded="false">
+  
+    
+      <form action="/search/node" method="get" id="search-block-form" accept-charset="UTF-8" class="search-form d-flex search-block-form">
+  <div class="js-form-item form-item js-form-type-search form-item-keys js-form-item-keys form-no-label">
+      <label for="edit-keys" class="visually-hidden">Search</label>
+        <input title="Enter the terms you wish to search for." class="input-sm form-search form-control" placeholder="Search site..." data-drupal-selector="edit-keys" data-msg-maxlength="Search field has a maximum length of 128." type="search" id="edit-keys" name="keys" value="" size="15" maxlength="128" />
+
+        </div>
+<div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions--2"><input class="search-form__submit button js-form-submit form-submit form-control" data-drupal-selector="edit-submit" type="submit" id="edit-submit" value="" />
+</div>
+
+</form>
+
+
+  </div>
+
+<div class="collapse navbar-collapse" data-bs-parent="#navbar-kicker" id="user_block">
+  
+    
+      <div class="content">
+              
+
+              <ul id="navbar-user" class="nav navbar-right nav-pills navigation--level-1">
+                                                    <li class="nav-item navigation__item--level-1">
+                             <a href="/en/support" class="help__section nav-link navigation__link--level-1" data-drupal-link-system-path="node/26479"><span class="material-icons-outlined md-18"> help_outline </span>Help</a>
+              
+        </li>
+                                                <li class="nav-item navigation__item--level-1  navigation__item--last">
+                             
+          <a href="/user/login?destination=/en/about/media-centre/aifs-blog/2026/farewell-external-ai-models" class="nav-link navigation__link--level-1 ">
+            <span class="material-icons-outlined md-18">login</span> Log in
+          </a>
+
+              
+        </li>
+        </ul>
+  
+
+
+    </div>
+  </div>
+
+
+					</div>   
+
+					<div class="nav-mobile col-4 d-flex justify-content-end">    
+						<a class="navbar-toggle collapsed" id="toggle-search" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-search" aria-label="Search" aria-expanded="false" aria-controls="navbar-search"><span class="material-icons-outlined md-24">search</span></a> 
+						<a class="navbar-toggle collapsed" data-bs-toggle="collapse" id="toggle-user"  data-bs-target="#user_block" aria-label="Toggle user menu" aria-expanded="false" aria-controls="user_block"><span class="material-icons-outlined md-24">account_circle</span></a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="navbar-menu">
+			<div class="container">
+				<div class="row">
+					<div class="d-flex align-items-center justify-content-center">	
+							    <nav role="navigation" aria-labelledby="block-ecmwf-main-menu-menu" id="block-ecmwf-main-menu">
+    
+                
+
+              <ul class="nav navigation--level-1">
+                                                    <li class="nav-item nav-item--level-1 active-trail">
+                          <a href="/en/about" class="nav-link text-white nav-link--level-1 active-trail" data-drupal-link-system-path="node/9">About</a>
+                          </li>
+                                                <li class="nav-item nav-item--level-1">
+                          <a href="/en/forecasts" class="nav-link text-white nav-link--level-1" data-drupal-link-system-path="node/39">Forecasts</a>
+                          </li>
+                                                <li class="nav-item nav-item--level-1">
+                          <a href="/en/computing" class="nav-link text-white nav-link--level-1" data-drupal-link-system-path="node/104">Computing</a>
+                          </li>
+                                                <li class="nav-item nav-item--level-1">
+                          <a href="/en/research" class="nav-link text-white nav-link--level-1" data-drupal-link-system-path="node/105">Research</a>
+                          </li>
+                                                <li class="nav-item nav-item--level-1">
+                          <a href="/en/learning" class="nav-link text-white nav-link--level-1" data-drupal-link-system-path="node/146">Learning</a>
+                          </li>
+                                                <li class="nav-item nav-item--level-1  nav-item--last">
+                          <a href="/en/publications" class="nav-link text-white nav-link--level-1" data-drupal-link-system-path="node/187">Publications</a>
+                          </li>
+        </ul>
+  
+
+
+  </nav>
+
+
+					</div>
+				</div>
+				
+			</div>
+		</div>	
+	</div>	
+	<div class="header-menu" id="navbar-kicker">
+		<div class="container">
+			    <nav role="navigation" aria-labelledby="block-mainnavigation-3-menu" id="block-mainnavigation-3">
+    
+        
+              <ul>
+        
+            
+      <li class="nav-item menu-item--collapsed">
+                <a href="/en/about/who-we-are" class="nav-link nav-link--en-about-who-we-are" data-drupal-link-system-path="node/21042">Who we are</a>
+              </li>
+    
+            
+      <li class="nav-item menu-item--collapsed">
+                <a href="/en/about/what-we-do" class="nav-link nav-link--en-about-what-we-do" data-drupal-link-system-path="node/21007">What we do</a>
+              </li>
+    
+            
+      <li class="nav-item menu-item--collapsed">
+                <a href="/en/about/jobs" class="nav-link nav-link--en-about-jobs" data-drupal-link-system-path="node/21022">Jobs</a>
+              </li>
+    
+            
+      <li class="nav-item menu-item--collapsed menu-item--active-trail">
+                <a href="/en/about/media-centre" class="nav-link active nav-link--en-about-media-centre" data-drupal-link-system-path="node/21014">Media centre</a>
+              </li>
+    
+            
+      <li class="nav-item menu-item--collapsed">
+                <a href="/en/about/suppliers" class="nav-link nav-link--en-about-suppliers" data-drupal-link-system-path="node/21021">Suppliers</a>
+              </li>
+    
+            
+      <li class="nav-item menu-item--collapsed">
+                <a href="/en/about/grants" class="nav-link nav-link--en-about-grants" data-drupal-link-system-path="node/29371">Grants</a>
+              </li>
+    
+            
+      <li class="nav-item menu-item--collapsed">
+                <a href="/en/about/contact-us/location" class="nav-link nav-link--en-about-contact-us-location" data-drupal-link-system-path="node/21005">Location</a>
+              </li>
+        </ul>
+  
+
+
+
+  </nav>
+
+
+		</div>
+    </div>
+	  <div id="edit-tabs" class="collapsed">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          
+        </div>
+      </div>
+    </div>
+  </div></header> 
+
+
+<div id="page-wrapper">
+  <main>
+          <section class="hero">
+            
+
+<div id="block-aifsbloghero" class="block block-block-content block-block-contentf81d15c2-aded-42b6-8204-ae5e3683860a">
+  
+    
+      <div class="content">
+      <div class="img-hero"  style="background-size: cover !important;background-repeat: no-repeat !important;background: url('/sites/default/files/2026-05/Farewell-external-AI-models-banner.png');">  <div class="science-blog-heading">        
+      <div class="container">
+          <div class="row">
+                <div class="col-lg-8 offset-lg-3 my-5">
+					<h1 class="title">Farewell to the external AI models </h1>
+                    <div class="date ">11 May 2026</div>
+
+                    <div class="row"><div class="col-sm-12"><div class="author ">
+
+
+
+      <div class="field field--name-field-science-blog-author field--type-entity-reference field--label-hidden field__items">
+              <div class="field__item">Zied Ben Bouallègue</div>
+              <div class="field__item">Baudouin Raoult</div>
+              <div class="field__item">Matthew Chantry</div>
+          </div>
+  </div>                        </div>                    </div>
+                </div>
+            </div>
+      </div>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+
+      </section>
+        
+    <div id="main-wrapper" class="layout-main-wrapper clearfix">
+              <div id="main" class="container">
+          
+          <div class="row row-offcanvas row-offcanvas-left clearfix">
+                          <main class="main-content col-lg-6" id="content" role="main">
+                            <section class="section">
+                  <a id="main-content" tabindex="-1"></a>
+                      <div id="block-ecmwf-content" class="block block-system block-system-main-block">
+  
+    
+      <div class="content">
+      
+<article data-history-node-id="34355" class="node node--type-aifs-blog node--promoted node--view-mode-full clearfix">
+  <header>
+    
+          
+      </header>
+  <div class="node__content clearfix">
+  
+    
+
+
+
+            <div class="field field--name-body field--type-text-with-summary field--label-hidden field__item"><div class="tex2jax_process"><p>Machine learning (ML) models have become an increasingly important component of the global weather forecasting landscape.</p>
+
+<p>Over the past few years at ECMWF, several externally developed models have been run alongside the Integrated Forecasting System (IFS) in an experimental setting, allowing their performance to be assessed against established numerical methods.&nbsp;</p>
+
+<p>The <a href="https://www.ecmwf.int/en/newsletter/185/earth-system-science/upgrade-ifs-cycle-50r1">upgrade of the IFS to Cycle 50r1</a> has provided a test of how robust these models are to changes in their underlying data. &nbsp;</p>
+
+<p>In this blog post, we discuss the impact of the IFS upgrade on the performance of the ML models run at ECMWF, and why this has prompted the decision to stop running external models in real time. </p>
+
+<h2>The IFS and ML models&nbsp;</h2>
+
+<p>The IFS is the global numerical weather prediction (NWP) model run operationally by ECMWF.</p>
+
+<p>It receives regular updates, with each upgrade incorporating new science, improving its performance.&nbsp;The IFS is also the backbone of the <a href="https://www.ecmwf.int/en/forecasts/dataset/ecmwf-reanalysis-v5">ERA5 reanalysis dataset</a>, which is used to train ML models for global weather forecasting. ERA5 is based on IFS Cycle 41r2&nbsp;– the operational cycle in 2016.</p>
+
+<p>ML models for global weather forecasting are generally trained on approximately 40 years of ERA5 data and, for some, fine-tuned on the latest version of the IFS. This is the case for the Artificial Intelligence Forecasting System (AIFS), ECMWF’s ML-based forecasting model that has been <a data-entity-substitution="canonical" data-entity-type="node" data-entity-uuid="8aadcecf-83a0-4eda-bccf-d3ecee6fe36d" href="/en/about/media-centre/news/2025/ecmwfs-ai-forecasts-become-operational" title="ECMWF’s AI forecasts become operational">operational since February 2025</a>. More precisely, AIFS v1.1 is fine-tuned on seven years of operational analysis spanning January 2016 to January 2023.&nbsp;</p>
+
+<h2>A verification experiment&nbsp;</h2>
+
+<p>Since 2023, ECMWF has run several external ML models in experimental mode. Forecasts from a selection of these models are routinely made available on <a data-entity-substitution="canonical" data-entity-type="node" data-entity-uuid="83d7e2b5-2398-41ea-a50c-c65bb2343b91" href="/en/about/media-centre/aifs-blog/2023/new-ml-model-ecmwf-web-charts" title="A new ML model in the ECMWF web charts">openCharts</a>,&nbsp;providing the weather community with quick and easy access to ML-based predictions. This effort predates the creation of the AIFS and has helped build a better understanding of the structure and performance of these new types of forecasts, which helped initiate the uptake of ML in global weather forecasting.&nbsp;</p>
+
+<p>At the beginning of 2026, the set of external ML models running daily at ECMWF comprised the following: Pangu-Weather (Huawei), GraphCast (Google DeepMind), Aurora (Microsoft Research), and FourCastNet (Nvidia). These models were run twice daily (at 0 and 12 UTC) and were initialised with the IFS operational analysis.</p>
+
+<p>Prior to the 50r1 upgrade, we conducted a verification experiment to simulate the impact of the new IFS cycle on ML model performance. The ML models were initialised with pre-operational 50r1 analysis over a two-month period (21 January to 20 March 2026), and verification scores were computed using 50r1 analysis as the reference. The results were compared with those from the same models initialised with and verified against the 49r1 analysis (the operational analysis). For surface variables, forecasts were assessed against SYNOP observations.&nbsp;</p>
+
+<h2>The impact on scores&nbsp;</h2>
+
+<p>The IFS upgrade is motivated by research advances that have improved IFS forecast performance. This is reflected in Figures 1 and 2, which show a reduction in the root-mean-squared error (RMSE) of IFS forecasts for both upper-air and surface variables. However, without adaptive measures in place, the impact of the IFS upgrade on ML model performance is neutral or negative.&nbsp;</p>
+
+<p>We can distinguish two groups of ML models. The first group (PanguWeather and FourCastNet) shows a neutral impact, while the second group (GraphCast, Aurora, AIFS v1.1) shows a reduction in performance after the change in initial conditions. The models that are negatively impacted are those that have a fine-tuning step in their optimisation process. This fine-tuning step is key to producing the best possible forecasts, but it introduces greater sensitivity to the exact initiating analysis.</p>
+
+<figure>
+  
+            <img loading="eager" srcset="/sites/default/files/styles/wide/public/2026-05/AIFS-blog-ml-models-fig1-combined-690px.png?itok=QsL25V5m 1x" width="690" height="473" src="/sites/default/files/styles/wide/public/2026-05/AIFS-blog-ml-models-fig1-combined-690px.png?itok=QsL25V5m&amp;47655" alt="Multi-panel line plots showing RMSE difference and bias versus lead time (1–10 days) for Z500 and T850 across six models; GraphCast shows the largest negative RMSE differences, while biases generally become more negative with lead time." title="Impact of using initial conditions from IFS Cycle 50r1">
+
+
+
+
+  <div class="image__credit"></div>
+</figure>
+
+<p><em>Figure 1: Impact of using initial conditions from IFS Cycle 50r1 on forecast performance for 500 hPa (Z500) geopotential height and temperature at 850 hPa (T850) over the northern hemisphere. Upper panels: RMSE difference, where negative values indicate a degradation in performance with the IFS upgrade and positive values indicate an improvement in performance. Lower panels: mean error (bias) of 49r1 initialised forecasts (solid lines) and of 50r1 initialised forecasts (dashed lines).&nbsp;</em></p>
+
+<p>Results for upper-air variables (Figure 1) and surface variables (Figure 2) show similar behaviour, although surface variables exhibit greater variability.&nbsp;</p>
+
+<figure>
+  
+            <img loading="eager" srcset="/sites/default/files/styles/wide/public/2026-05/AIFS-blog-ml-models-fig2-combined-v2-690px.png?itok=v89wLxXp 1x" width="690" height="240" src="/sites/default/files/styles/wide/public/2026-05/AIFS-blog-ml-models-fig2-combined-v2-690px.png?itok=v89wLxXp&amp;47655" alt="Two line plots showing RMSE difference versus lead time (1–10 days) for 2T and 10FF across models; GraphCast shows the largest negative differences, while AIFS v1.1 trends positive at longer lead times." title="RMSE difference versus lead time ">
+
+
+
+
+  <div class="image__credit"></div>
+</figure>
+
+<p><em>Figure 2: Impact of IFS Cycle 50r1 on surface variable performance in terms of RMSE. Difference for 2 m temperature and 10 m wind speed over the northern hemisphere.&nbsp;</em></p>
+
+<p>While the overall bias aggregated over the northern hemisphere is rather similar after the change in initial conditions (bottom plots of Figure 1), looking at maps of scores reveals local discrepancies. Differences in mean state and RMSE at day six are shown in Figure 3. In this example, we show results only for GraphCast and PanguWeather, as representative members of their respective groups (the less- and more-impacted ML models after the IFS upgrade) mentioned above.&nbsp;</p>
+
+<figure>
+  
+            <img loading="eager" srcset="/sites/default/files/styles/wide/public/2026-05/AIFS-blog-ml-models-fig3-combined-v2-690px.png?itok=xqXKprjw 1x" width="690" height="471" src="/sites/default/files/styles/wide/public/2026-05/AIFS-blog-ml-models-fig3-combined-v2-690px.png?itok=xqXKprjw&amp;47655" alt="Global maps showing mean temperature difference (left) and RMSE difference (right) for GraphCast and PanguWeather, with mostly negative (blue/green) differences indicating generally lower errors and cooler biases across many regions." title="Mean temperature and RMSE difference">
+
+
+
+
+  <div class="image__credit"></div>
+</figure>
+
+<p><em>Figure 3: Mean error difference (left) and root-mean-squared error (RMSE) difference (right) of T850 forecasts at day six. GraphCast (top), and PanguWeather (bottom) forecasts initialised with 50r1 are compared with forecasts initialised with 49r1.&nbsp;</em></p>
+
+<p>In the top plots of Figure 3, we see that GraphCast tends to be colder over north-eastern Europe and Russia when initialised with 50r1, and that this bias contributes to an increase in RMSE over the same region. This change in the forecast mean state could potentially be explained by the change in the sea-ice configuration in 50r1. Conversely, the change in initial conditions has little impact on the mean bias of PanguWeather and its resulting error fields (bottom plots of Figure 3).&nbsp;</p>
+
+<h2>Implications for ML models &nbsp;</h2>
+
+<p>Fine-tuning is a strategy used to mitigate the reanalysis-to-forecast domain shift. When the forecast itself is subject to a domain shift, for example, due to a cycle upgrade, the fine-tuning strategy can be partially undermined, as illustrated by the results presented here.</p>
+
+<p>To counter this negative effect, the new version of the AIFS (AIFS v2) has also been fine-tuned using prototype 50r1 data. In addition to the operational analysis, the seven-year fine-tuning dataset includes prototype 50r1 data. For other organisations running (and fine-tuning) data-driven models using ECMWF analysis, they can expect to see similar effects on their models.</p>
+
+<p>As for the external ML models, the performance degradation following the IFS upgrade to 50r1 has prompted a discussion at ECMWF about the current added value of these first-generation ML models. While these models demonstrated the potential of ML-based approaches and inspired the creation of the AIFS, they are increasingly out of date. Both GraphCast and Aurora are negatively affected by 50r1. For Aurora and PanguWeather, the lack of precipitation forecasts limits utility. In addition, both GraphCast and FourCastNet have been superseded by probabilistic models developed by their respective research groups.</p>
+
+<p>Perhaps more importantly, we now see a wider range of real-time model forecasts from operational centres. Examples include <a href="https://www.dwd.de/DE/presse/pressemitteilungen/DE/2026/20260302_pm_bmv_startet_aicon_news.html">AICON</a> from the German Meteorological Service (DWD), which provides a <a href="https://opendata.dwd.de/weather/nwp/v1/m/aicon/">direct data feed</a>; <a href="https://open.canada.ca/data/en/dataset/f8333a8d-3bf4-4d25-9105-c33363b2481e">GEML</a> from Environment and Climate Change Canada (ECCC); and <a href="https://www.noaa.gov/news-release/noaa-deploys-new-generation-of-ai-driven-global-weather-models">AIGFS and AIGEFS</a> from the US National Oceanic and Atmospheric Administration (NOAA). Together, with upcoming additions from the operational meteorological community, these provide the community with a diverse and regularly updated set of models to examine as we continue to understand the role of ML-based forecasting systems.&nbsp;</p>
+
+<p>As such, we have decided to stop the real-time operation of the external ML models with the implementation of 50r1. Charts, such as T850 forecasts based on PanguWeather, will no longer be available on openCharts. However, users can continue to generate ML-based forecasts themselves by <a data-entity-substitution="canonical" data-entity-type="node" data-entity-uuid="370563bd-a831-49f3-abf5-4232785197b3" href="/en/about/media-centre/aifs-blog/2024/run-ai-models-yourself-ecmwf-open-data" title="Run AI models yourself from ECMWF open data">running ML models from ECMWF’s open data</a>.</p>
+
+<p>Each of the external ML models&nbsp;– FourCastNet, PanguWeather, GraphCast, and Aurora – &nbsp;has made a significant contribution to the development of this field. By making their models open source, their developers have enabled the community to build trust in data-driven modelling. ECMWF acknowledges and greatly values these contributions.</p>
+
+<p><em>Top banner image:&nbsp;© mesh cube / iStock / Getty Images Plus</em></p>
+</div></div>
+      
+
+
+
+  <div class="field field--name-field-dataset-doi field--type-string field--label-above">
+    <div class="field__label">DOI</div>
+              <div class="field__item">10.21957/fa8ad01483</div>
+          </div>
+
+  </div>
+  
+   </article>
+
+
+
+    </div>
+  </div>
+
+
+                </section>
+              </main>
+                          <div class="sidebar_first sidebar col-lg-3 order-first" id="sidebar_first">
+                <aside class="section" role="complementary">
+                      <div id="block-linkbacktoaifsblog" class="block block-block-content block-block-content2b2767d1-dd3c-4428-a93f-c47da115c072">
+  
+    
+      <div class="content">
+      
+
+
+
+            <div class="field field--name-body field--type-text-with-summary field--label-hidden field__item"><p class="sectionnav--list-item"><a href="../">◀&nbsp; View all AIFS blog posts</a></p>
+</div>
+      
+    </div>
+  </div>
+
+
+                </aside>
+              </div>
+                        
+                          <div class="sidebar_second sidebar col-lg-3 order-last" id="sidebar_second">
+                <aside class="section" role="complementary">
+                      <div class="views-element-container block block-views block-views-blockaifs-blog-block-2" id="block-views-block-aifs-blog-block-2--3">
+  
+      <h2 class="block-title">Recent posts</h2>
+    
+      <div class="content">
+      <div><div class="view view-aifs-blog view-id-aifs_blog view-display-id-block_2 js-view-dom-id-c05745db6106844b3358d9653b7b56a9c6e5de0dd21aa67cb9cd336b4b4cd136">
+  
+    
+      
+      <ul class="sectionnav--list">
+        
+<li class="sectionnav--list-item"><a href="/en/about/media-centre/aifs-blog/2026/observations-forecasts-bringing-ai-dop-real-time" hreflang="en">From observations to forecasts: bringing AI-DOP into real time</a></li>
+
+  
+<li class="sectionnav--list-item"><a href="/en/about/media-centre/aifs-blog/2026/aifs-marine" hreflang="en">Bringing the surface ocean into the AIFS </a></li>
+
+  
+<li class="sectionnav--list-item"><a href="/en/about/media-centre/aifs-blog/2026/flow-matching-spatio-temporal-downscaling" hreflang="en">Flow matching for spatio-temporal downscaling with Anemoi</a></li>
+
+  
+<li class="sectionnav--list-item"><a href="/en/about/media-centre/aifs-blog/2026/aifl-global-streamflow-prediction" hreflang="en">AIFL: advancing global streamflow prediction with operational machine learning </a></li>
+
+  
+<li class="sectionnav--list-item"><a href="/en/about/media-centre/aifs-blog/2026/hourglass-filling-gaps-between-forecasts" hreflang="en">HourGlass: filling in the gaps between forecasts </a></li>
+
+
+    </ul>
+  
+          </div>
+</div>
+
+    </div>
+  </div>
+
+
+                  <div class="node node-page node-sidebar_second">
+                      
+                  </div>
+                </aside>
+              </div>
+                      </div>
+        </div>
+          </div>
+      </main>
+</div>
+<button id="back-to-top" class="btn__func back-to-top" role="button" aria-label="back to top">
+	<span class="material-icons-outlined" aria-hidden="true">expand_less</span>
+</button>
+<button id="to-bottom" class="btn__func to-bottom" role="button" aria-label="to bottom">
+	<span class="material-icons-outlined" aria-hidden="true">expand_more</span>
+</button>
+<footer id="ecmwf__footer" class="site-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12" id="flags-top">
+                      <div class="flags-wrapper">
+          <span class="flag-icon flag-icon-at" title="Austria" tabindex="0"></span>
+          <span class="flag-icon flag-icon-be" title="Belgium" tabindex="1"></span>
+          <span class="flag-icon flag-icon-hr" title="Croatia" tabindex="2"></span>
+          <span class="flag-icon flag-icon-dk" title="Denmark" tabindex="3"></span>
+          <span class="flag-icon flag-icon-ee" title="Estonia" tabindex="4"></span>
+          <span class="flag-icon flag-icon-fi" title="Finland" tabindex="5"></span>
+          <span class="flag-icon flag-icon-fr" title="France" tabindex="6"></span>
+          <span class="flag-icon flag-icon-de" title="Germany" tabindex="7"></span>
+          <span class="flag-icon flag-icon-gr" title="Greece" tabindex="8"></span>
+          <span class="flag-icon flag-icon-is" title="Iceland" tabindex="9"></span>
+          <span class="flag-icon flag-icon-ie" title="Ireland" tabindex="10"></span>
+          <span class="flag-icon flag-icon-it" title="Italy" tabindex="11"></span>
+          <span class="flag-icon flag-icon-lu" title="Luxembourg" tabindex="12"></span>
+          <span class="flag-icon flag-icon-nl" title="The Netherlands" tabindex="13"></span>
+          <span class="flag-icon flag-icon-no" title="Norway" tabindex="14"></span>
+          <span class="flag-icon flag-icon-pt" title="Portugal" tabindex="15"></span>
+          <span class="flag-icon flag-icon-rs" title="Serbia" tabindex="16"></span>
+          <span class="flag-icon flag-icon-si" title="Slovenia" tabindex="17"></span>
+          <div class="d-block d-lg-none d-sm-block  break"></div>
+          <span class="flag-icon flag-icon-es" title="Spain" tabindex="18"></span>
+          <span class="flag-icon flag-icon-se" title="Sweden" tabindex="19"></span>
+          <span class="flag-icon flag-icon-ch" title="Switzerland" tabindex="20"></span>
+          <span class="flag-icon flag-icon-tr" title="Republic of Türkiye" tabindex="21"></span>
+          <span class="flag-icon flag-icon-gb" title="United Kingdom" tabindex="22"></span>
+          <span class="flag-icon flag-icon-bg" title="Bulgaria" tabindex="23"></span>
+          <span class="flag-icon flag-icon-cz" title="Czech Republic" tabindex="24"></span>
+          <span class="flag-icon flag-icon-ge" title="Georgia" tabindex="25"></span>
+          <span class="flag-icon flag-icon-hu" title="Hungary" tabindex="26"></span>
+          <span class="flag-icon flag-icon-il" title="Israel" tabindex="27"></span>
+          <span class="flag-icon flag-icon-lv" title="Latvia" tabindex="28"></span>
+          <span class="flag-icon flag-icon-lt" title="Lithuania" tabindex="29"></span>
+          <span class="flag-icon flag-icon-me" title="Montenegro" tabindex="30"></span>
+          <span class="flag-icon flag-icon-ma" title="Morocco" tabindex="31"></span>
+          <span class="flag-icon flag-icon-mk" title="North Macedonia" tabindex="32"></span>
+          <span class="flag-icon flag-icon-ro" title="Romania" tabindex="33"></span>
+          <span class="flag-icon flag-icon-sk" title="Slovak Republic" tabindex="34"></span>
+        </div>
+          </div>
+      </div>
+    </div>
+      <div class="container">
+        <div class="col-md-12"><hr></div>
+                    <div class="site-footer__top clearfix row">          
+                              <div class="col-lg-2 col-md-4">
+                        <div class="block_menu_footer">
+  
+      <h2 class="title_items__footer"><a href="/en/about" class="menu-item--active-trail" data-drupal-link-system-path="node/9">About</a></h2>
+    
+      <div class="footer__items__content">
+      
+              <div class="row">
+                    <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/about/who-we-are" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-about-who-we-are" data-drupal-link-system-path="node/21042">Who we are</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/about/what-we-do" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-about-what-we-do" data-drupal-link-system-path="node/21007">What we do</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/about/jobs" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-about-jobs" data-drupal-link-system-path="node/21022">Jobs</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed active">
+                <a href="/en/about/media-centre" class="link-light fw-light text-decoration-none menu__footer_link active menu__footer_link--en-about-media-centre" data-drupal-link-system-path="node/21014">Media centre</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/about/suppliers" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-about-suppliers" data-drupal-link-system-path="node/21021">Suppliers</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/about/grants" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-about-grants" data-drupal-link-system-path="node/29371">Grants</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/about/contact-us/location" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-about-contact-us-location" data-drupal-link-system-path="node/21005">Location</a>
+              </div>
+        </div>
+  
+
+
+    </div>
+  </div>
+
+
+                </div>
+                                            <div class="col-lg-2 col-md-4">
+                        <div class="block_menu_footer">
+  
+      <h2 class="title_items__footer"><a href="/en/forecasts" data-drupal-link-system-path="node/39">Forecasts</a></h2>
+    
+      <div class="footer__items__content">
+      
+              <div class="row">
+                    <div class="menu__footer_items">
+                <a href="/en/forecasts/charts" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-forecasts-charts" data-drupal-link-system-path="node/42">Charts</a>
+              </div>
+                <div class="menu__footer_items">
+                <a href="/en/forecasts/datasets" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-forecasts-datasets" data-drupal-link-system-path="node/83">Datasets</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/forecasts/quality-our-forecasts" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-forecasts-quality-our-forecasts" data-drupal-link-system-path="node/20991">Quality of our forecasts</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/forecasts/documentation-and-support" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-forecasts-documentation-and-support" data-drupal-link-system-path="node/20961">About our forecasts</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/forecasts/accessing-forecasts" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-forecasts-accessing-forecasts" data-drupal-link-system-path="node/20999">Access to forecasts</a>
+              </div>
+        </div>
+  
+
+
+    </div>
+  </div>
+
+
+                </div>
+                                            <div class="col-lg-2 col-md-4">
+                        <div class="block_menu_footer">
+  
+      <h2 class="title_items__footer"><a href="/en/computing" data-drupal-link-system-path="node/104">Computing</a></h2>
+    
+      <div class="footer__items__content">
+      
+              <div class="row">
+                    <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/computing/our-facilities" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-computing-our-facilities" data-drupal-link-system-path="node/21040">Our facilities</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/computing/access-computing-facilities" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-computing-access-computing-facilities" data-drupal-link-system-path="node/21044">Access to computing facilities</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/computing/software" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-computing-software" data-drupal-link-system-path="node/20992">Software</a>
+              </div>
+                <div class="menu__footer_items">
+                <a href="https://status.ecmwf.int" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link-https--statusecmwfint">Service status</a>
+              </div>
+        </div>
+  
+
+
+    </div>
+  </div>
+
+
+                </div>
+                                            <div class="col-lg-2 col-md-4">
+                        <div class="block_menu_footer">
+  
+      <h2 class="title_items__footer"><a href="/en/research" data-drupal-link-system-path="node/105">Research</a></h2>
+    
+      <div class="footer__items__content">
+      
+              <div class="row">
+                    <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/research/data-assimilation" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-research-data-assimilation" data-drupal-link-system-path="node/20823">Data assimilation</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/research/modelling-and-prediction" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-research-modelling-and-prediction" data-drupal-link-system-path="node/21030">Modelling and Prediction</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/research/climate-reanalysis" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-research-climate-reanalysis" data-drupal-link-system-path="node/21012">Climate reanalysis</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/research/projects" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-research-projects" data-drupal-link-system-path="node/21036">Projects</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="/en/research/emi-rd-projects" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-research-emi-rd-projects" data-drupal-link-system-path="en/research/emi-rd-projects">EMI R&amp;D Projects</a>
+              </div>
+        </div>
+  
+
+
+    </div>
+  </div>
+
+
+                </div>
+                                            <div class="col-lg-2 col-md-4">
+                        <div class="block_menu_footer">
+  
+      <h2 class="title_items__footer"><a href="/en/learning" data-drupal-link-system-path="node/146">Learning</a></h2>
+    
+      <div class="footer__items__content">
+      
+              <div class="row">
+                    <div class="menu__footer_items">
+                <a href="/en/learning/training" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-learning-training" data-drupal-link-system-path="node/29610">Training</a>
+              </div>
+                <div class="menu__footer_items">
+                <a href="https://events.ecmwf.int/category/2/" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link-https--eventsecmwfint-category-2-">Workshops</a>
+              </div>
+                <div class="menu__footer_items menu__footer_collapsed">
+                <a href="https://events.ecmwf.int/category/9/" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link-https--eventsecmwfint-category-9-">Seminars</a>
+              </div>
+        </div>
+  
+
+
+    </div>
+  </div>
+
+
+                </div>
+                                            <div class="col-lg-2 col-md-4">
+                        <div class="block_menu_footer">
+  
+      <h2 class="title_items__footer"><a href="/en/publications" data-drupal-link-system-path="node/187">Publications</a></h2>
+    
+      <div class="footer__items__content">
+      
+              <div class="row">
+                    <div class="menu__footer_items">
+                <a href="/en/publications/search?f%5B0%5D=filter_by_type_of_publication%3Anewsletter&amp;sort=bibcite_year&amp;order=desc" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-publications-searchf5b05dfilter-by-type-of-publication3anewslettersortbibcite-yearorderdesc" data-drupal-link-query="{&quot;f&quot;:[&quot;filter_by_type_of_publication:newsletter&quot;],&quot;order&quot;:&quot;desc&quot;,&quot;sort&quot;:&quot;bibcite_year&quot;}" data-drupal-link-system-path="en/publications/search">Newsletter</a>
+              </div>
+                <div class="menu__footer_items">
+                <a href="/en/publications/search?f%5B0%5D=filter_by_type_of_publication%3Atechnical_memorandum&amp;sort=bibcite_year&amp;order=desc" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-publications-searchf5b05dfilter-by-type-of-publication3atechnical-memorandumsortbibcite-yearorderdesc" data-drupal-link-query="{&quot;f&quot;:[&quot;filter_by_type_of_publication:technical_memorandum&quot;],&quot;order&quot;:&quot;desc&quot;,&quot;sort&quot;:&quot;bibcite_year&quot;}" data-drupal-link-system-path="en/publications/search">Technical memoranda</a>
+              </div>
+                <div class="menu__footer_items">
+                <a href="/en/publications/search?f%5B0%5D=filter_by_type_of_publication%3Areport&amp;sort=bibcite_year&amp;order=desc" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-publications-searchf5b05dfilter-by-type-of-publication3areportsortbibcite-yearorderdesc" data-drupal-link-query="{&quot;f&quot;:[&quot;filter_by_type_of_publication:report&quot;],&quot;order&quot;:&quot;desc&quot;,&quot;sort&quot;:&quot;bibcite_year&quot;}" data-drupal-link-system-path="en/publications/search">Reports</a>
+              </div>
+                <div class="menu__footer_items">
+                <a href="/en/publications/search?bib_event_series=IFS%20Documentation&amp;sort=bibcite_year&amp;order=desc" class="link-light fw-light text-decoration-none menu__footer_link menu__footer_link--en-publications-searchbib-event-seriesifs20documentationsortbibcite-yearorderdesc" data-drupal-link-query="{&quot;bib_event_series&quot;:&quot;IFS Documentation&quot;,&quot;order&quot;:&quot;desc&quot;,&quot;sort&quot;:&quot;bibcite_year&quot;}" data-drupal-link-system-path="en/publications/search">IFS documentation</a>
+              </div>
+        </div>
+  
+
+
+    </div>
+  </div>
+
+
+                </div>
+                          </div>
+                <div class="col-md--12"><hr></div>
+                  <div class="site-footer__bottom row text-light">
+           
+            <div id="copyright" class="col-xl-4  order-lg-1 order-sm-3 order-md-1 order-1">
+                    <div id="block-copyright" class="block block-block-content block-block-content7047e01a-f082-46cf-89ab-51f943e83d3b">
+  
+    
+      <div class="content">
+      
+
+
+
+            <div class="field field--name-body field--type-text-with-summary field--label-hidden field__item"><p class="copyright d-none d-lg-block"> © European Centre for Medium-Range Weather Forecasts</p>
+<p class="copyright d-block d-xs-none d-lg-none">  © ECMWF</p></div>
+      
+    </div>
+  </div>
+
+
+            </div>
+            <div id="social" class="col-xl-4 text-center order-lg-2 order-sm-1 order-md-3">
+              <ul class="list-unstyled p-0 m-0 d-flex justify-content-center">
+                <li>
+                  <a class="text-light" href="https://www.linkedin.com/company/ecmwf" aria-label="ECMWF Linkedin profile" target="_blank">
+                   <img class="social-svg" src="/themes/ecmwf/src/images/svg/linkedin.svg" alt=""/>
+                  </a>
+                </li>
+                <li>
+                  <a class="text-light" href="https://bsky.app/profile/ecmwf.int" aria-label="ECMWF blusky profile" target="_blank">
+                    <img class="social-svg" src="/themes/ecmwf/src/images/svg/bluesky.svg" alt=""/>
+                  </a>
+                </li>
+                <li>
+                  <a class="text-light" href="https://www.facebook.com/ECMWF" aria-label="ECMWF Facebook profile" target="_blank">
+                    <img class="social-svg" style="height:24px; padding: 0 5px;" src="/themes/ecmwf/src/images/svg/facebook.svg" alt=""/>
+                  </a>
+                </li>
+                <li>
+                  <a class="text-light" href="https://www.flickr.com/photos/ecmwf" aria-label="ECMWF Flickr profile" target="_blank">
+                    <img class="social-svg" src="/themes/ecmwf/src/images/svg/flickr.svg" alt=""/>
+                  </a>
+                </li>
+                <li>
+                  <a class="text-light" href="https://www.instagram.com/ecmwf.official/" aria-label="ECMWF instagram profile" target="_blank">
+                    <img class="social-svg" src="/themes/ecmwf/src/images/svg/instagram.svg" alt=""/>
+                  </a>
+                </li>
+                <li>
+                  <a class="text-light" href="https://youtube.com/ecmwf" aria-label="ECMWF YouTube profile" target="_blank">
+                    <img class="social-svg" src="/themes/ecmwf/src/images/svg/youtube.svg" alt=""/>
+                  </a>
+                </li>
+              </ul>
+            </div>
+           
+            <div id="link" class="col-xl-4 order-lg-2 order-sm-1 order-md-2">
+                  <nav role="navigation" aria-labelledby="block-footerlink-menu" id="block-footerlink">
+    
+                
+                                      <ul>
+                          <li>
+            <a href="/en/accessibility" title="Useful footer links and privacy" data-drupal-link-system-path="node/20981">Accessibility</a>
+                      </li>
+                  <li>
+            <a href="/en/privacy" data-drupal-link-system-path="node/20982">Privacy</a>
+                      </li>
+                  <li>
+            <a href="/en/terms-use" data-drupal-link-system-path="node/20983">Terms of use</a>
+                      </li>
+                  <li>
+            <a href="/en/about/contact-us" data-drupal-link-system-path="node/20980">Contact</a>
+                      </li>
+                </ul>
+          
+
+    
+  </nav>
+
+
+            </div>
+          </div>
+            </div>
+  </footer>
+
+  </div>
+
+    
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"","currentPath":"","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"clientside_validation_jquery":{"validate_all_ajax_forms":2,"force_validate_on_blur":false,"force_html5_validation":false,"messages":{"required":"This field is required.","remote":"Please fix this field.","email":"Please enter a valid email address.","url":"Please enter a valid URL.","date":"Please enter a valid date.","dateISO":"Please enter a valid date (ISO).","number":"Please enter a valid number.","digits":"Please enter only digits.","equalTo":"Please enter the same value again.","maxlength":"Please enter no more than {0} characters.","minlength":"Please enter at least {0} characters.","rangelength":"Please enter a value between {0} and {1} characters long.","range":"Please enter a value between {0} and {1}.","max":"Please enter a value less than or equal to {0}.","min":"Please enter a value greater than or equal to {0}.","step":"Please enter a multiple of {0}."}},"ckeditorAccordion":{"accordionStyle":{"collapseAll":null,"keepRowsOpen":null,"animateAccordionOpenAndClose":1,"openTabsWithHash":1,"allowHtmlInTitles":0}},"mathjax":{"config_type":0,"config":{"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"processEscapes":"true"},"showProcessingMessages":"false","messageStyle":"none"}},"ajaxTrustedUrl":{"\/search\/node":true,"\/search\/site":true},"user":{"uid":0,"permissionsHash":"22f1c3d1614bf8e7cfdff3b249f032c8b15567877dbc326002abb9dd8182ba56"}}</script>
+<script src="/sites/default/files/js/js_i7qYn5Uta7NkioVnoaRb8uAn3WHFYTjcaOx9iI9hu7g.js?scope=footer&amp;delta=0&amp;language=en&amp;theme=ecmwf&amp;include=eJyNjEEOgzAMBD-UkidFJt5Q0xDTxFD4fZGgPXOb1ayGmE2p7J4u6FLVYq6HGWrANmsDhyT5mM0PKKiUXXyBxbQGilErixb_p7OAwi5mQbEmjLBSFiY7dBjfC-ru49qd1P1id_-ScPd6OTjE6ZN8r2rNKs3XHrL2lB_N9ixlcBPZc6TNN9gyfwEDZm_h"></script>
+<script src="https://static.addtoany.com/menu/page.js" defer></script>
+<script src="/sites/default/files/js/js_5cVE-aawn8dNa8d_bLjxNMLng1fZRZjV46AsQtn8YEM.js?scope=footer&amp;delta=2&amp;language=en&amp;theme=ecmwf&amp;include=eJyNjEEOgzAMBD-UkidFJt5Q0xDTxFD4fZGgPXOb1ayGmE2p7J4u6FLVYq6HGWrANmsDhyT5mM0PKKiUXXyBxbQGilErixb_p7OAwi5mQbEmjLBSFiY7dBjfC-ru49qd1P1id_-ScPd6OTjE6ZN8r2rNKs3XHrL2lB_N9ixlcBPZc6TNN9gyfwEDZm_h"></script>
+<script src="/modules/contrib/ckeditor_accordion/js/accordion.frontend.min.js?to92kp"></script>
+<script src="/sites/default/files/js/js_T0UNBZtlIP4pRXaiLzBl9wH3ita-AICi8qQJIa3WCRU.js?scope=footer&amp;delta=4&amp;language=en&amp;theme=ecmwf&amp;include=eJyNjEEOgzAMBD-UkidFJt5Q0xDTxFD4fZGgPXOb1ayGmE2p7J4u6FLVYq6HGWrANmsDhyT5mM0PKKiUXXyBxbQGilErixb_p7OAwi5mQbEmjLBSFiY7dBjfC-ru49qd1P1id_-ScPd6OTjE6ZN8r2rNKs3XHrL2lB_N9ixlcBPZc6TNN9gyfwEDZm_h"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="/sites/default/files/js/js_55zuElgpuY6G3bM3OM2kxi6kpDoBAx02ie6auVoHoE0.js?scope=footer&amp;delta=6&amp;language=en&amp;theme=ecmwf&amp;include=eJyNjEEOgzAMBD-UkidFJt5Q0xDTxFD4fZGgPXOb1ayGmE2p7J4u6FLVYq6HGWrANmsDhyT5mM0PKKiUXXyBxbQGilErixb_p7OAwi5mQbEmjLBSFiY7dBjfC-ru49qd1P1id_-ScPd6OTjE6ZN8r2rNKs3XHrL2lB_N9ixlcBPZc6TNN9gyfwEDZm_h"></script>
+
+    
+    
+  </body>
+</html>
