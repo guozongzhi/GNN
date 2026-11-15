@@ -1,325 +1,399 @@
-# GNN 原理与关键论文：逐页讲稿
+# GNN：原理图解与论文精读讲稿
 
-32 页融合补充版。结合用户提供的 15 页入门 PPT，保留论文精读密度，不含 Demo。新增论文核验于 2026-11-15；既有部署资料沿用 2026-11-10 核查。论文数值为作者报告。原件位于 `source/papers/`，定位采用本地 PDF 的物理页序。
+对应当前 **35页PPT**，2026-11-15更新。正文以机制、推导与反例为主，不以基准分数表组织内容，不含Demo。下文的页码均指仓库中原始PDF的物理页，从第一页起计。
+
+## 共同记号
+
+`x`是可观测输入属性，`h`是传播中的隐藏状态，`W / θ`是跨节点共享的可学习参数，`S`是由图和度数计算的传播算子。`h(A)`表示节点A的状态，上标表示传播层数。消息函数、聚合函数和更新函数分别记作`M / AGG / U`，图级读出记作`R`。
+
+公式后的解释回答三个问题：信息从哪里来、经过什么操作、为什么这种操作保留了所需信息。论文的理论保证、作者实验与本讲教学推导分别说明；所有历史实验都没有在本次重新复现。
 
 ## 01 · GNN 原理与关键论文
 
-内容由原始论文与既有应用核查记录整理。封面沿用 AI 生成概念插图，不表示某篇论文的结构或结果。论文原件与版本见 source/manifest.json。
-
-参考输入：图神经网络（GNN）入门：原理、里程碑与应用.pptx；15页；SHA-256 19d99aa481093b45ebdd662ae19ce41e18467ed38e9a29acf74feba9fa61042c。输入文件保持不变。仅采用问题组织与示意方向，事实以下列原文为准。
-融合补充版共32页，新增8页；不含Demo。
-
-## 02 · 为什么用图：关系、邻域与节点重编号
-
-来源：MPNN https://arxiv.org/abs/1704.01212 。下图为六节点无向教学图的邻接数据可视化。颜色仅区分示例对象，橙色A为目标。相同图在后续各页保持相同节点位置。
-
-Gilmer et al. (2017). Neural Message Passing for Quantum Chemistry. ICML.
-原始记录：https://arxiv.org/abs/1704.01212
-本地原件：[mpnn2017.pdf](../source/papers/mpnn2017.pdf)
-定位：PDF 第 3 页，§2，式 (1)–(3)。
-MPNN 把多种既有图模型统一为消息函数 M、节点更新函数 U 和整图读出 R。消息可依赖中心节点、邻居节点和边特征。对邻居求和使节点编号变化时表示同步重排；整图性质预测的 readout 必须对节点排列不变。此处省略层索引和部分上下标以便阅读，N(v) 是邻居集合。论文主要研究分子性质回归，原子是节点，化学键或距离等作为边信息。它是模型框架，不是只有一套固定网络结构。
-本地原件：source/papers/zhou-survey2021.pdf
-原始记录：https://arxiv.org/abs/1812.08434v6
-原文定位：PDF 第1–3页，§1、图1、§2
-规则网格和一般关系图均可建模为图。一般图邻居数量可变，编号不应改变实体对应的预测。以下置换公式为教学推导。
-参考输入：图神经网络（GNN）入门：原理、里程碑与应用.pptx；15页；SHA-256 19d99aa481093b45ebdd662ae19ce41e18467ed38e9a29acf74feba9fa61042c。输入文件保持不变。仅采用问题组织与示意方向，事实以下列原文为准。
-
-## 03 · 图、表示与预测：GNN 的统一记号
-
-来源：MPNN https://arxiv.org/abs/1704.01212 。下图为六节点无向教学图的邻接数据可视化。颜色仅区分示例对象，橙色A为目标。相同图在后续各页保持相同节点位置。
-
-GCN: https://arxiv.org/abs/1609.02907。邻接约定A[i,j]表示j向i传播。六节点图无向，矩阵对称；此页A未加自环。特征矩阵只是教学示意，不是标签。
-
-GCN: https://arxiv.org/abs/1609.02907。本页是六节点环图上的数值扩散。每个节点原始度2，加自环后度3，因此S=(A+I)/3。初始只有A=1，其他为0。依次显示x、Sx、S²x，W=1且无非线性，不含训练。橙色表示当前非零值。
-
-Gilmer et al. (2017). Neural Message Passing for Quantum Chemistry. ICML.
-原始记录：https://arxiv.org/abs/1704.01212
-本地原件：[mpnn2017.pdf](../source/papers/mpnn2017.pdf)
-定位：PDF 第 3 页，§2，式 (1)–(3)。
-MPNN 把多种既有图模型统一为消息函数 M、节点更新函数 U 和整图读出 R。消息可依赖中心节点、邻居节点和边特征。对邻居求和使节点编号变化时表示同步重排；整图性质预测的 readout 必须对节点排列不变。此处省略层索引和部分上下标以便阅读，N(v) 是邻居集合。论文主要研究分子性质回归，原子是节点，化学键或距离等作为边信息。它是模型框架，不是只有一套固定网络结构。
-
-## 04 · 从业务到模型：三类任务与各自的输出头
-
-GCN: https://arxiv.org/abs/1609.02907。本页是六节点环图上的数值扩散。每个节点原始度2，加自环后度3，因此S=(A+I)/3。初始只有A=1，其他为0。依次显示x、Sx、S²x，W=1且无非线性，不含训练。橙色表示当前非零值。
-
-Gilmer et al. (2017). Neural Message Passing for Quantum Chemistry. ICML.
-原始记录：https://arxiv.org/abs/1704.01212
-本地原件：[mpnn2017.pdf](../source/papers/mpnn2017.pdf)
-定位：PDF 第 3 页，§2，式 (1)–(3)。
-MPNN 把多种既有图模型统一为消息函数 M、节点更新函数 U 和整图读出 R。消息可依赖中心节点、邻居节点和边特征。对邻居求和使节点编号变化时表示同步重排；整图性质预测的 readout 必须对节点排列不变。此处省略层索引和部分上下标以便阅读，N(v) 是邻居集合。论文主要研究分子性质回归，原子是节点，化学键或距离等作为边信息。它是模型框架，不是只有一套固定网络结构。
-
-Schlichtkrull et al. (2018). Modeling Relational Data with Graph Convolutional Networks. ESWC.
-原始记录：https://arxiv.org/abs/1703.06103
-本地原件：[rgcn2018.pdf](../source/papers/rgcn2018.pdf)
-定位：PDF 第 2–3 页，式 (2)–(4)，图 2。
-R-GCN 将邻居按关系类型分组，对每种关系使用 W_r 变换，再归一化求和并加入自身变换。知识图谱中的关系方向很重要，原文加入逆关系与自环。关系很多时，直接使用完整 W_r 会产生大量参数；basis decomposition 让 W_r=∑_b a_rb V_b，共享基矩阵，block decomposition 则使用块对角结构。实体分类使用节点输出，链路预测还需要关系解码器；原文采用 DistMult。图数据库或知识图谱应用并不自动等于使用 R-GCN。
-本地原件：source/papers/zhou-survey2021.pdf
-原始记录：https://arxiv.org/abs/1812.08434v6
-原文定位：PDF 第3–4页 §3；第14–18页表3与§8
-表中公式为简化教学实例。链路任务需定义正例、负样本及解码器，整图任务需定义readout，不可只换分类层就忽略协议。
-参考输入：图神经网络（GNN）入门：原理、里程碑与应用.pptx；15页；SHA-256 19d99aa481093b45ebdd662ae19ce41e18467ed38e9a29acf74feba9fa61042c。输入文件保持不变。仅采用问题组织与示意方向，事实以下列原文为准。
-
-## 05 · 关键演进：从固定点到分层传播与科学应用
-
-精选时间线。Gori2005 DOI10.1109/IJCNN.2005.1555942与Scarselli2009 DOI10.1109/TNN.2008.2005605；Bruna2014 https://arxiv.org/abs/1312.6203；ChebNet2016 https://arxiv.org/abs/1606.09375；GCN2017 https://arxiv.org/abs/1609.02907 与MPNN https://arxiv.org/abs/1704.01212；GIN2019 https://arxiv.org/abs/1810.00826；EGNN2021 https://arxiv.org/abs/2102.09844；GraphGPS2022 https://arxiv.org/abs/2205.12454；GraphCast2023 https://arxiv.org/abs/2212.12794；GNoME2023 DOI10.1038/s41586-023-06735-9。按主要发表年份，非首次预印本年份。
-
-Scarselli et al. (2009). The Graph Neural Network Model. IEEE TNN.
-原始记录：https://doi.org/10.1109/TNN.2008.2005605
-本地原件：[scarselli2009.pdf](../source/papers/scarselli2009.pdf)
-定位：PDF 第 3–5 页，§II-A 与固定点讨论。
-每个节点有状态，状态依赖本节点、边与邻居的信息。全图状态可概括为 h=Fθ(h,x)。原文通过关于状态的压缩映射条件，保证固定点的存在、唯一性和迭代收敛。这里用 h、x 统一记号，不照搬原文的 x 状态符号。与现代固定层数前馈 GNN 相比，这一框架强调共享转移函数的迭代与收敛约束。2005 年 Gori 等论文是早期记录，本包未取得其全文；本页细节依据 Scarselli 2009。
-
-## 06 · Bruna → ChebNet → GCN：谱卷积的局部化
-
-Bruna et al. (2014). Spectral Networks and Deep Locally Connected Networks on Graphs. ICLR.
-原始记录：https://arxiv.org/abs/1312.6203
-本地原件：[bruna2014.pdf](../source/papers/bruna2014.pdf)
-定位：谱卷积章节。
-用图拉普拉斯 L=UΛUᵀ 的特征向量充当图傅里叶基。谱滤波写作 Ugθ(Λ)Uᵀx；基与图结构有关，显式特征分解及稠密基运算昂贵。
-Defferrard, Bresson, Vandergheynst (2016). Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering. NeurIPS.
-原始记录：https://arxiv.org/abs/1606.09375
-本地原件：[chebnet2016.pdf](../source/papers/chebnet2016.pdf)
-定位：PDF 第 2–3 页，§2.1，式 (2)–(5)，图 1。
-以切比雪夫多项式参数化谱滤波，通过递推在稀疏图上计算，不必显式形成 U。最高多项式次数为 K 时，传播支持范围不超过 K 跳；本页写成 k=0…K，原论文另有 K 个系数、最高 K−1 次的记号。忽略通道等因子时复杂度随 K|E| 线性增长。原图说明原论文还有图粗化与池化；它们不是下方公式的全部内容。
-
-Kipf and Welling (2017). Semi-Supervised Classification with Graph Convolutional Networks. ICLR.
-原始记录：https://arxiv.org/abs/1609.02907
-本地原件：[gcn2017.pdf](../source/papers/gcn2017.pdf)
-定位：PDF 第 2–3 页，式 (2)、(6)–(8)。
-GCN 从切比雪夫一阶近似出发，近似最大特征值并约束两个系数，再引入 renormalization trick。图先加自环，再按新度数做对称归一化。S 的每行不必和为 1，因此它不等于普通均值。左表为三节点链的 S；右例输入为 [1,2,0]，计算 A 的聚合值。W=1，无非线性，只用于手算说明。
-
-## 07 · GCN：归一化、两层模型与半监督损失
-
-Kipf and Welling (2017). Semi-Supervised Classification with Graph Convolutional Networks. ICLR.
-原始记录：https://arxiv.org/abs/1609.02907
-本地原件：[gcn2017.pdf](../source/papers/gcn2017.pdf)
-定位：PDF 第 2–3 页，式 (2)、(6)–(8)。
-GCN 从切比雪夫一阶近似出发，近似最大特征值并约束两个系数，再引入 renormalization trick。图先加自环，再按新度数做对称归一化。S 的每行不必和为 1，因此它不等于普通均值。左表为三节点链的 S；右例输入为 [1,2,0]，计算 A 的聚合值。W=1，无非线性，只用于手算说明。
-
-Kipf and Welling (2017). Semi-Supervised Classification with Graph Convolutional Networks. ICLR.
-原始记录：https://arxiv.org/abs/1609.02907
-本地原件：[gcn2017.pdf](../source/papers/gcn2017.pdf)
-定位：PDF 第 3–4 页，式 (9)、(10)，图 1。
-两层模型 Z=softmax(S ReLU(S X W0) W1)。softmax 逐节点作用，交叉熵仅在有训练标签的节点上求和。传导式设定可以看到同图未标注节点的特征与边，不等于可以使用测试标签。原图右侧是作者在 Cora 上使用约 5% 标签得到的隐藏表示 t-SNE，可视化不等于分类准确率。GCN 算子有共享参数，不能把原文传导式评估误读为该算子在数学上绝不能用于新节点。
-
-## 08 · GCN 手算：三节点链的一次完整向量传播
-
-Kipf and Welling (2017). Semi-Supervised Classification with Graph Convolutional Networks. ICLR.
-原始记录：https://arxiv.org/abs/1609.02907
-本地原件：[gcn2017.pdf](../source/papers/gcn2017.pdf)
-定位：PDF 第 2–3 页，式 (2)、(6)–(8)。
-GCN 从切比雪夫一阶近似出发，近似最大特征值并约束两个系数，再引入 renormalization trick。图先加自环，再按新度数做对称归一化。S 的每行不必和为 1，因此它不等于普通均值。左表为三节点链的 S；右例输入为 [1,2,0]，计算 A 的聚合值。W=1，无非线性，只用于手算说明。
-
-Kipf and Welling (2017). Semi-Supervised Classification with Graph Convolutional Networks. ICLR.
-原始记录：https://arxiv.org/abs/1609.02907
-本地原件：[gcn2017.pdf](../source/papers/gcn2017.pdf)
-定位：PDF 第 3–4 页，式 (9)、(10)，图 1。
-两层模型 Z=softmax(S ReLU(S X W0) W1)。softmax 逐节点作用，交叉熵仅在有训练标签的节点上求和。传导式设定可以看到同图未标注节点的特征与边，不等于可以使用测试标签。原图右侧是作者在 Cora 上使用约 5% 标签得到的隐藏表示 t-SNE，可视化不等于分类准确率。GCN 算子有共享参数，不能把原文传导式评估误读为该算子在数学上绝不能用于新节点。
-参考输入：图神经网络（GNN）入门：原理、里程碑与应用.pptx；15页；SHA-256 19d99aa481093b45ebdd662ae19ce41e18467ed38e9a29acf74feba9fa61042c。输入文件保持不变。仅采用问题组织与示意方向，事实以下列原文为准。
-教学例，非论文实验。三节点链加自环后度为(2,3,2)，S22=1/3。参考PPT的0.50自环权重应修正；W=I、ReLU下，中心输出[1.2247,1.4082]。
-
-## 09 · GCN：作者结果、随机划分与评价协议
-
-Kipf and Welling (2017). Semi-Supervised Classification with Graph Convolutional Networks. ICLR.
-原始记录：https://arxiv.org/abs/1609.02907
-本地原件：[gcn2017.pdf](../source/papers/gcn2017.pdf)
-定位：PDF 第 6–7 页，§5.2 与表 2。
-引用网络仅使用每类 20 个训练标签，另外使用 500 个验证节点调参。默认划分 GCN 在 Citeseer/Cora/Pubmed 上分别为 70.3/81.5/79.0% Accuracy；论文还报告随机划分为 67.9±0.5、80.1±0.5、78.9±0.7%。默认 GCN 数值是 100 次随机权重初始化的均值，随机划分行来自作者另外的实验协议。不能把两行差异解释为同一组重复实验的置信区间。Planetoid* 是原文表 2 引用的相应数据集最佳变体。所有数值为作者报告的历史结果，本次没有复现。
-
-## 10 · MPNN：消息、状态更新与图级读出的设计空间
-
-Gilmer et al. (2017). Neural Message Passing for Quantum Chemistry. ICML.
-原始记录：https://arxiv.org/abs/1704.01212
-本地原件：[mpnn2017.pdf](../source/papers/mpnn2017.pdf)
-定位：PDF 第 3 页，§2，式 (1)–(3)。
-MPNN 把多种既有图模型统一为消息函数 M、节点更新函数 U 和整图读出 R。消息可依赖中心节点、邻居节点和边特征。对邻居求和使节点编号变化时表示同步重排；整图性质预测的 readout 必须对节点排列不变。此处省略层索引和部分上下标以便阅读，N(v) 是邻居集合。论文主要研究分子性质回归，原子是节点，化学键或距离等作为边信息。它是模型框架，不是只有一套固定网络结构。
-
-Gilmer et al. (2017). Neural Message Passing for Quantum Chemistry. ICML.
-原始记录：https://arxiv.org/abs/1704.01212
-本地原件：[mpnn2017.pdf](../source/papers/mpnn2017.pdf)
-定位：PDF 第 3–5 页，§2、§3 及 readout 讨论。
-原论文将多个模型实例化为不同的 M、U、R，并在 QM9 上研究分子性质预测。边网络可以用边属性产生作用于邻居状态的变换；节点更新可以使用 GRU 等函数；整图读出比较求和与 set2set 等集合函数。不能用一种均值聚合代替所有 MPNN，也不能把节点读出自动当成整图预测。
-Battaglia et al. (2018). Relational inductive biases, deep learning, and graph networks. arXiv.
-原始记录：https://arxiv.org/abs/1806.01261
-本地原件：[gn2018.pdf](../source/papers/gn2018.pdf)
-定位：Graph Network block 定义。
-Graph Networks 进一步显式组织边、节点与全局状态的更新。这个扩展是模型组织方式，不是 MPNN 论文已经包含的唯一标准实现。
-
-## 11 · GraphSAGE：采样邻域与共享聚合函数
-
-Hamilton, Ying, Leskovec (2017). Inductive Representation Learning on Large Graphs. NeurIPS.
-原始记录：https://arxiv.org/abs/1706.02216
-本地原件：[graphsage2017.pdf](../source/papers/graphsage2017.pdf)
-定位：PDF 第 2、4–5 页，图 1，算法 1，§3.2–3.3。
-GraphSAGE 学习共享的邻域聚合函数，区别于直接为每个已知节点学习独立向量。对新节点仍需要可用特征和邻接关系。每层采样固定数量邻居，控制计算展开；批量成本仍随各层采样数的乘积增长。典型更新把自身表示与聚合结果拼接后做变换，并有 L2 归一化。论文比较 mean、pooling、LSTM 聚合器；LSTM 使用随机邻居顺序，并不严格置换不变。原文既支持无监督图损失，也支持监督损失。
-
-## 12 · GraphSAGE：新节点与新图需要不同的留出验证
-
-Hamilton, Ying, Leskovec (2017). Inductive Representation Learning on Large Graphs. NeurIPS.
-原始记录：https://arxiv.org/abs/1706.02216
-本地原件：[graphsage2017.pdf](../source/papers/graphsage2017.pdf)
-定位：PDF 第 7–8 页，表 1，§4.1–4.2。
-柱状图选用表 1 的监督 GraphSAGE-mean 与 raw features。Citation 的 micro-F1 为 0.820 对 0.575；Reddit 为 0.950 对 0.585；PPI 为 0.598 对 0.422。Citation 按年份留出新论文，Reddit 按时间留出新帖子，PPI 留出整张图。PPI 是多标签节点分类；不能把不同数据集 micro-F1 的绝对值拿来跨任务比较难度。也不能据此把 GCN 的传播算子一概归为无法归纳。数值均为作者原表结果，本次没有复现。
-
-## 13 · GAT：邻域注意力公式与同架构消融
-
-Velickovic et al. (2018). Graph Attention Networks. ICLR.
-原始记录：https://arxiv.org/abs/1710.10903
-本地原件：[gat2018.pdf](../source/papers/gat2018.pdf)
-定位：PDF 第 3–4 页，式 (1)–(6)，图 1。
-GAT 首先用共享 W 变换节点特征，然后对中心与邻居的拼接计算 LeakyReLU 注意力分数。softmax 只在给定邻域内归一化，原文实验包括自环。多头注意力在隐藏层拼接，在最终层平均。注意力沿图中的边计算，并不默认所有节点两两互看；这与普通全连接 Transformer 注意力范围不同。权重可以用来查看模型如何分配信息，但不是因果解释。
-
-Velickovic et al. (2018). Graph Attention Networks. ICLR.
-原始记录：https://arxiv.org/abs/1710.10903
-本地原件：[gat2018.pdf](../source/papers/gat2018.pdf)
-定位：PDF 第 8–9 页，§3，表 2、3。
-表 3 在 PPI 上给出相同架构的常量注意力 Const-GAT 与 GAT：micro-F1 分别为 0.934±0.006 和 0.973±0.002；均值差为 0.039，即 3.9 个百分点。原文报告 10 次运行，± 为标准差。这个消融比直接比较不同宽度、层数或邻域处理方式的架构更能隔离自适应权重的贡献，但依然只适用于作者这一实验设定。原表 2 的 Cora/Citeseer/Pubmed GAT Accuracy 为 83.0±0.7/72.5±0.7/79.0±0.3%。数值为作者原论文报告，本次未重新复现。
-
-## 14 · R-GCN：按关系聚合与关系参数共享
-
-Schlichtkrull et al. (2018). Modeling Relational Data with Graph Convolutional Networks. ESWC.
-原始记录：https://arxiv.org/abs/1703.06103
-本地原件：[rgcn2018.pdf](../source/papers/rgcn2018.pdf)
-定位：PDF 第 2–3 页，式 (2)–(4)，图 2。
-R-GCN 将邻居按关系类型分组，对每种关系使用 W_r 变换，再归一化求和并加入自身变换。知识图谱中的关系方向很重要，原文加入逆关系与自环。关系很多时，直接使用完整 W_r 会产生大量参数；basis decomposition 让 W_r=∑_b a_rb V_b，共享基矩阵，block decomposition 则使用块对角结构。实体分类使用节点输出，链路预测还需要关系解码器；原文采用 DistMult。图数据库或知识图谱应用并不自动等于使用 R-GCN。
-
-## 15 · 异质、异配与动态：三个彼此独立的维度
-
-Schlichtkrull et al. (2018). Modeling Relational Data with Graph Convolutional Networks. ESWC.
-原始记录：https://arxiv.org/abs/1703.06103
-本地原件：[rgcn2018.pdf](../source/papers/rgcn2018.pdf)
-定位：PDF 第 2–3 页，式 (2)–(4)，图 2。
-R-GCN 将邻居按关系类型分组，对每种关系使用 W_r 变换，再归一化求和并加入自身变换。知识图谱中的关系方向很重要，原文加入逆关系与自环。关系很多时，直接使用完整 W_r 会产生大量参数；basis decomposition 让 W_r=∑_b a_rb V_b，共享基矩阵，block decomposition 则使用块对角结构。实体分类使用节点输出，链路预测还需要关系解码器；原文采用 DistMult。图数据库或知识图谱应用并不自动等于使用 R-GCN。
-
-过平滑论文：https://arxiv.org/abs/1801.07606。异配性 https://arxiv.org/abs/2006.11468 。过挤压 https://arxiv.org/abs/2006.05205。左图为六节点规则环的纯扩散x,Sx,S²x,S⁶x，W=1、无非线性，不是完整GCN训练，也不据此断言所有GNN深度增加必然失效。S为对称且行和1的规则图传播，重复扩散使数值趋同。
-本地原件：[tgn2020.pdf](../source/papers/tgn2020.pdf)
-原始记录：https://arxiv.org/abs/2006.10637v3
-原文定位：PDF 第2–4页 §3–3.2
-事件流建模、记忆和时间可见性。下表为跨论文教学比较，异质与异配不是同义词。
-
-## 16 · GIN：重复计数、单射聚合与 1-WL 上界
-
-Xu et al. (2019). How Powerful are Graph Neural Networks?. ICLR.
-原始记录：https://arxiv.org/abs/1810.00826
-本地原件：[gin2019.pdf](../source/papers/gin2019.pdf)
-定位：PDF 第 5–7 页，Lemma 5、图 2、图 3。
-邻域是多重集，同一类型可以出现多次。教学例令 a=[1,0]、b=[0,1]：{a,b} 与 {a,a,b,b} 的均值均为 [0.5,0.5]，max 均为 [1,1]，但求和是 [1,1] 与 [2,2]。这展示重复计数的丢失，不证明任意原始数值直接求和都是单射，例如标量集合 {1,3} 与 {2,2} 也会碰撞。原论文通过适当编码、可数特征域和有界多重集等条件讨论可区分性。原图是论文图 3 的示意，不是本地训练结果。
-
-Xu et al. (2019). How Powerful are Graph Neural Networks?. ICLR.
-原始记录：https://arxiv.org/abs/1810.00826
-本地原件：[gin2019.pdf](../source/papers/gin2019.pdf)
-定位：PDF 第 4–6 页，Theorem 3、Corollary 6、式 (4.1)–(4.2)。
-典型 GIN 更新为 MLP((1+ε)h_v+∑_u h_u)。ε 可以学习或固定；中心节点与邻居在组合中有区别。图级输出可将各层的 sum readout 拼接。原文在可数输入特征等假设下，若聚合与 readout 足够可区分且层数足够，能达到 1-WL 的结构判别能力。1-WL 迭代聚合邻居颜色并为不同多重集重新着色；它不能区分所有非同构图，因此 GIN 也不能。表达力理论说明可表示的区别，不保证有限宽度、实际训练或任意任务精度。
-
-## 17 · PinSage：大规模推荐中的采样、批次与推理
-
-Ying et al. (2018). Graph Convolutional Neural Networks for Web-Scale Recommender Systems. KDD.
-原始记录：https://arxiv.org/abs/1806.01973
-本地原件：[pinsage2018.pdf](../source/papers/pinsage2018.pdf)
-定位：PDF 第 1–4 页，图 1，§3。
-Pinterest 的 PinSage 使用 pin–board 二部图及内容特征，在短随机游走形成的邻域上聚合。访问频率提供重要性权重，CPU 生产者准备邻域与特征，GPU 消费 mini-batch，离线 MapReduce 推理生成大规模嵌入。原论文报告在 30 亿节点、180 亿边图上的生产应用，这些是 2018 年论文的历史规模，不代表当前线上架构。困难负样本和课程式训练属于论文的重要工程设计。此页原图示例的局部计算图并不是完整生产图。
-
-## 18 · LightGCN：协同过滤中的结构简化及其边界
-
-He et al. (2020). LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation. SIGIR.
-原始记录：https://arxiv.org/abs/2002.02126
-本地原件：[lightgcn2020.pdf](../source/papers/lightgcn2020.pdf)
-定位：PDF 第 2–4 页，表 1，图 2，式 (3)–(8)。
-LightGCN 针对用户–物品协同过滤，输入是可训练的 ID embeddings。传播中去掉特征变换、非线性和显式自环，只保留对称归一化邻居求和；把第 0…K 层表示加权组合，再以内积评分并用推荐目标训练。没有每层 W 不等于没有可学习参数：第 0 层嵌入仍需要学习。论文在相同数据划分与评价协议下通过 NGCF 消融提出简化，不能推广为所有有丰富特征的图任务都应该删非线性。
-
-## 19 · TGN：从静态邻接转向带时间戳的事件流
-
-本地原件：[tgn2020.pdf](../source/papers/tgn2020.pdf)
-原始记录：https://arxiv.org/abs/2006.10637v3
-原文定位：PDF 第2–5页 §3、图1–2；第7页 §5、表2
-Rossi et al., 2020，arXiv:2006.10637v3。本文为预印本与ICML2020 GRL+工作坊工作，不标为ICML主会论文。事件流、节点记忆、消息、聚合、记忆更新、embedding模块；上一批消息更新记忆后预测当前批，随后缓存当前原始消息以避免泄漏。70/15/15 chronological split，10次运行均值。
-
-## 20 · 局部消息传递的三种限制及诊断区别
-
-过平滑论文：https://arxiv.org/abs/1801.07606。异配性 https://arxiv.org/abs/2006.11468 。过挤压 https://arxiv.org/abs/2006.05205。左图为六节点规则环的纯扩散x,Sx,S²x,S⁶x，W=1、无非线性，不是完整GCN训练，也不据此断言所有GNN深度增加必然失效。S为对称且行和1的规则图传播，重复扩散使数值趋同。
-
-## 21 · EGNN：用距离与相对位置保证几何等变
-
-Satorras, Hoogeboom, Welling (2021). E(n) Equivariant Graph Neural Networks. ICML.
-原始记录：https://arxiv.org/abs/2102.09844
-本地原件：[egnn2021.pdf](../source/papers/egnn2021.pdf)
-定位：PDF 第 2–3 页，式 (3)–(6)，§3.1。
-EGNN 的消息使用平方距离 ||x_i−x_j||²，与标量节点特征及边属性一起输入 φ_e。坐标更新由相对位置向量的标量加权和组成，保证平移、旋转和反射等变；标量特征保持不变。下方公式省略层索引和常数 C。能量等标量预测通常需要不变性，坐标或向量预测需要等变性，两者不能混淆。原文标准 E(n) 结构包含反射对称性，不能自动解决依赖手性的目标；全连接构图也可能带来二次规模成本。原文研究 N-body、图自编码与 QM9 等任务。
-
-## 22 · GraphGPS：位置编码、局部消息与全局交互
-
-Rampasek et al. (2022). Recipe for a General, Powerful, Scalable Graph Transformer. NeurIPS.
-原始记录：https://arxiv.org/abs/2205.12454
-本地原件：[graphgps2022.pdf](../source/papers/graphgps2022.pdf)
-定位：PDF 第 2–5 页，图 1，§3.1–3.3。
-GPS 蓝图结合位置/结构编码、局部 MPNN 与全局注意力。局部模块处理邻接和边信息，全局模块提供非局部交互，PE/SE 为 Transformer 提供图位置与结构信号。图 1 的 GPS layer 可组合 GINE、GatedGCN、PNA 与 Transformer、Performer、BigBird 等。普通全注意力是 O(N²)，采用合适的线性注意力模块才对应线性规模的论述，且编码计算等预处理代价需要另算。不能把 GraphGPS 当成只有一个固定结构、任何配置都线性、或无条件突破全部图表达力限制。
-
-## 23 · GNN × LLM：按语言模型的角色拆解接口
-
-本地原件：source/papers/llm-graphs2024.pdf
-原始记录：https://arxiv.org/abs/2312.02783v4
-原文定位：PDF 第4–5页 §3.2、图2；第7–10页 §5、图3–5
-Jin et al., TKDE 2024。准确分类为LLM as Predictor / Encoder / Aligner；场景分类为pure / text-attributed / text-paired graphs。Aligner包含预测对齐和潜在空间对齐。GraphRAG边界为本页分析：图检索本身不要求训练GNN。
-参考输入：图神经网络（GNN）入门：原理、里程碑与应用.pptx；15页；SHA-256 19d99aa481093b45ebdd662ae19ce41e18467ed38e9a29acf74feba9fa61042c。输入文件保持不变。仅采用问题组织与示意方向，事实以下列原文为准。
-
-## 24 · 核心论文对照：改变了哪个计算环节
-
-教学比较依据 GCN 式 (2)、GraphSAGE 算法 1、GAT 式 (1)–(6)、GIN 式 (4.1)、R-GCN 式 (2) 和 GraphGPS 图 1。原始 PDF 均位于 source/papers/。该表比较设计选择，不是准确率、计算量或年代的统一排名。每个条目省略了任务头、训练损失与具体实现。
-
-## 25 · DCRNN：把路网传播与时间递推结合起来
-
-本地原件：[dcrnn2018.pdf](../source/papers/dcrnn2018.pdf)
-原始记录：https://arxiv.org/abs/1707.01926v3
-原文定位：PDF 第2–4页 §2、式(2)–(4)、图2；第5页 §4、表1；第7页 §4.3
-Li, Yu, Shahabi & Liu, ICLR2018，1707.01926v3。双向随机游走（方向转移矩阵）与DCGRU；encoder-decoder以及scheduled sampling。节点为路网传感器，图按距离构造。METR-LA 207、PEMS-BAY 325节点，5分钟窗口；70%训练、10%验证、20%测试。表格仅摘取METR-LA，MAE为mph；作者结果。
-
-## 26 · GraphCast：多尺度球面图与 90.3% 的评价口径
-
-Lam et al. (2023). Learning skillful medium-range global weather forecasting. Science.
-原始记录：https://arxiv.org/abs/2212.12794
-本地原件：[graphcast2023.pdf](../source/papers/graphcast2023.pdf)
-定位：PDF 第 2–4 页，表 1，图 1。
-输入为当前与 6 小时前两个天气状态，预测 6 小时后的状态，再自回归滚动到更远时刻。Encoder 将经纬度网格局部区域映射到球面 multi-mesh，Processor 在多分辨率边的并集上传播，Decoder 把表示映回规则网格。multi-mesh 包含最细尺度的 40,962 个节点与多个尺度的边，兼顾局部与远程交互。本页图 1 的原图包含模型各阶段，不能将其误读为某个实时服务的当前架构。
-
-Lam et al. (2023). Learning skillful medium-range global weather forecasting. Science.
-原始记录：https://arxiv.org/abs/2212.12794
-本地原件：[graphcast2023.pdf](../source/papers/graphcast2023.pdf)
-定位：PDF 第 2、4–6 页，Verification methods 与 Forecast verification results。
-原论文报告在 1,380 个验证目标中的 90.3% 优于 HRES；89.9% 的目标达到作者显著性条件。目标由变量、气压层和预报提前量组合，不是分类样本，90.3% 也不是预测准确率或误差下降幅度。开发使用 1979–2017 ERA5，再在 2018 年以后的留出数据评估；评价指标包括 RMSE 与 ACC。论文注意对齐 ERA5 和 HRES 的数据同化窗口，并为 HRES 构造独立 ground truth；有长时效比较的初始化安排。单个 TPU v4 上一分钟内生成 10 天预报的结果是推理成本，不包括约四周、32 TPU 的训练。此页只展示作者原文研究结论，不声称当前线上产品性能。
-
-## 27 · GNoME：图网络预测、DFT 验证与主动学习
-
-Merchant et al. (2023). Scaling deep learning for materials discovery. Nature.
-原始记录：https://doi.org/10.1038/s41586-023-06735-9
-本地原件：[gnome2023.pdf](../source/papers/gnome2023.pdf)
-定位：PDF 第 1–2 页，图 1a，Overview of generation and filtration。
-GNoME 包含基于结构与基于成分两条候选生成/筛选路径。图网络估计能量或稳定性，DFT 计算验证候选，并将新结果回流到下一轮主动学习。论文称超过 220 万结构相对旧数据的凸包更稳定；考虑新候选相互竞争后的更新凸包包含 381,000 个新条目。这两种数量的参照不同，不能混为全部新增材料都在最终凸包上。计算稳定性是特定能量判据，不等于给出合成路线、实验可合成或商业可用。图为原论文图 1a，而非 AI 生成示意。
-
-## 28 · 应用证据：部署论文、官方披露与科研结论
-
-本页沿用 content/fact-check.md 中核查至 2026-11-10 的应用资料，没有将论文年份当成当前线上状态。Pinterest：PinSage https://arxiv.org/abs/1806.01973；MultiBiSage https://arxiv.org/abs/2205.10666。Google Maps：https://deepmind.google/blog/traffic-prediction-with-advanced-graph-neural-networks/ 与 https://blog.google/products-and-platforms/products/maps/google-maps-101-how-ai-helps-predict-traffic-and-determine-routes/ 为同机构相关证据。GraphCast https://arxiv.org/abs/2212.12794；GNoME https://doi.org/10.1038/s41586-023-06735-9。WeatherNext Graph 原服务弃用事实另见 source/pages/weathernext-deprecation.html 和原始官方链接 https://developers.google.com/weathernext/guides/deprecation；本页不扩展为所有后继天气产品停用。
-
-## 29 · 应用任务地图：实体、关系、目标与验证方式
-
-本页沿用 content/fact-check.md 中核查至 2026-11-10 的应用资料，没有将论文年份当成当前线上状态。Pinterest：PinSage https://arxiv.org/abs/1806.01973；MultiBiSage https://arxiv.org/abs/2205.10666。Google Maps：https://deepmind.google/blog/traffic-prediction-with-advanced-graph-neural-networks/ 与 https://blog.google/products-and-platforms/products/maps/google-maps-101-how-ai-helps-predict-traffic-and-determine-routes/ 为同机构相关证据。GraphCast https://arxiv.org/abs/2212.12794；GNoME https://doi.org/10.1038/s41586-023-06735-9。WeatherNext Graph 原服务弃用事实另见 source/pages/weathernext-deprecation.html 和原始官方链接 https://developers.google.com/weathernext/guides/deprecation；本页不扩展为所有后继天气产品停用。
-本地原件：source/papers/zhou-survey2021.pdf
-原始记录：https://arxiv.org/abs/1812.08434v6
-原文定位：PDF 第14–18页 表3、§8.1–8.2
-推荐、化学、交通、知识图谱、视觉等应用归纳。金融风控一行为本文构造的业务建模示意，不作为已部署案例；同样不能将PointNet++一概称为GNN。
-本地原件：source/papers/llm-graphs2024.pdf
-原始记录：https://arxiv.org/abs/2312.02783v4
-原文定位：PDF 第18–19页 §7
-图与文本融合的应用方向。
-参考输入：图神经网络（GNN）入门：原理、里程碑与应用.pptx；15页；SHA-256 19d99aa481093b45ebdd662ae19ce41e18467ed38e9a29acf74feba9fa61042c。输入文件保持不变。仅采用问题组织与示意方向，事实以下列原文为准。
-
-## 30 · 精读顺序与每篇论文必须回答的问题
-
-阅读建议依据各论文的原始方法和评估章节；它是教学组织方式，不是作者提出的统一标准。建议先精读 GCN 式 (2)、(9)，再用 MPNN 式 (1)–(3) 对齐术语，继而读 GraphSAGE 算法 1、GAT 图 1 与表 3、GIN 的聚合反例和条件。专题按任务选择 PinSage/LightGCN、R-GCN、EGNN、GraphGPS、GraphCast/GNoME。每篇论文的图构造、标签或监督来源、数据划分、指标和消融都应一起读取。
-
-## 31 · 原始资料：版本、定位与证据强度
-
-原始文件：source/papers/；26条catalog记录、25份已取得PDF。Gori2005全文未取得；Scarselli2009来自学术镜像。版本、字节、页数、SHA-256和获取时间见source/manifest.json；source/paper-index.md提供原始记录和本地链接。旧资料核验于2026-11-10，新增5篇核验于2026-11-15。用户提供PPT原件位于source/reference-decks/，内容对应及修正见content/ppt-supplement-notes.md。此页为原生资料索引表。
-
-## 32 · 参考论文索引
-
-共26条论文索引和25份本地PDF。题名、作者、发表口径、原始URL、文件身份及缺口分别见source/catalog.json、source/paper-index.md和source/manifest.json。新增DCRNN、TGN、Wu/Zhou综述与Jin综述。Wu综述预印本2019、期刊2021；Zhou综述卷标2020但接受与发表2021；TGN标工作坊/预印本，不作ICML主会。
+本讲以原理解释为主。用同一张小图解释邻域消息、特征变换和训练，再逐篇说明经典论文改变了哪一步、为什么改变、又损失了什么。公式紧跟直观解释；保留必要教学反例，实验数字不作主体。所有原始PDF及哈希见source/manifest.json。用户提供的15页入门PPT原字节保留于source/reference-decks。
+
+PPT不含Demo章节。
+
+## 02 · GNN 学的是什么：节点属性与关系共同形成表示
+
+先固定一张A—B—C小图。节点特征是可观测属性，例如用户行为、论文文本或原子类型；边定义允许哪些实体交流。模型要生成的隐藏表示h既含自身属性，也含与任务有关的邻域信息，最终用于节点、边或整图预测。图不是图像可视化，而是信息流的约束。节点改名不改变实体，因此共享的邻域规则应与重编号相容。节点预测随重编号同步重排，整图预测应不变。
+
+不同输出的训练标签和损失必须分别定义，不能把标签直接塞进节点特征。后文主要用接收端Aij表示j向i传消息，DCRNN单独采用原文W的方向约定。
+
+**原文定位**：MPNN p3 式(1)–(3)；Zhou 综述 p3–4 §3。
+
+- Gilmer et al.，Neural Message Passing for Quantum Chemistry，ICML（2017）。[原始记录](https://arxiv.org/abs/1704.01212) · [本地PDF](../source/papers/mpnn2017.pdf)
+
+- Jie Zhou et al.，Graph Neural Networks: A Review of Methods and Applications，AI Open 1 (2020), 57–81; published 2021（2021）。[原始记录](https://arxiv.org/abs/1812.08434v6) · [本地PDF](../source/papers/zhou-survey2021.pdf)
+
+## 03 · 一次消息传递：准备消息、汇总邻居、更新自身
+
+一次消息传递包含三个不同函数。M把发送节点状态、接收节点状态和边属性映射为消息；AGG把数量可变的消息集合变成固定宽度向量；U把聚合消息和中心旧状态融合为新状态。求和、均值等对邻居顺序不敏感，但保留的信息不同。所有节点同步使用上一层状态，避免节点遍历顺序改变结果。接收者并非总使用完整邻居集合，GraphSAGE和PinSage会采样。
+
+原始GCN的M可化为归一化权重乘邻居特征，GAT学习这个权重，RGCN用关系类型选择变换。这些论文的区别因此可以定位到同一条计算链。
+
+**原文定位**：Gilmer et al. 2017，p3 式(1)–(3)。
+
+- Gilmer et al.，Neural Message Passing for Quantum Chemistry，ICML（2017）。[原始记录](https://arxiv.org/abs/1704.01212) · [本地PDF](../source/papers/mpnn2017.pdf)
+
+## 04 · 层数怎样扩展信息范围：沿依赖关系逐层前进
+
+把A—B—C—D链上每个节点的初始属性看成一张独立卡片。第一层中B的状态含A、B、C的信息，A的状态含A和B。第二层A从B的上一层状态中间接接收到C的信息，所以两层的A至多依赖两跳。这个结论针对局部传播且初始特征不含全局信息；GraphGPS全局注意力会改变通信范围。感受野大不代表保留所有信息：多条路径会进入固定维向量，归一化可能衰减远处影响，聚合可能把不同多重集压成相同摘要。
+
+训练时每一层有独立参数，不能把真实深网简单等同重复做固定平均。
+
+**原文定位**：GCN p2 式(2)；MPNN p3 式(1)–(2)；图为教学示意。
+
+- Kipf and Welling，Semi-Supervised Classification with Graph Convolutional Networks，ICLR（2017）。[原始记录](https://arxiv.org/abs/1609.02907) · [本地PDF](../source/papers/gcn2017.pdf)
+
+- Gilmer et al.，Neural Message Passing for Quantum Chemistry，ICML（2017）。[原始记录](https://arxiv.org/abs/1704.01212) · [本地PDF](../source/papers/mpnn2017.pdf)
+
+## 05 · 训练怎样改变传播：标签监督的是共享规则
+
+半监督节点分类不是给每个未标注节点传播一个现成类别。前向时全图特征通过共享W和固定图算子生成表示；只有训练标签节点对交叉熵贡献误差。以B有标签为例，B预测依赖A、B、C的特征，反向传播沿这些计算路径更新共享权重W。更新后的同一W随后用于所有节点。原始GCN中邻接和对称度归一化通常固定，不在标准任务中自动学出新边。
+
+允许测试节点的特征和边进入计算图是传导式协议的一部分，但测试标签不能参与损失或选模。验证标签用于早停和超参数选择，最终测试只在选模后使用。
+
+**原文定位**：Kipf & Welling 2017，p3–4 式(9)–(10)；梯度路径为教学说明。
+
+- Kipf and Welling，Semi-Supervised Classification with Graph Convolutional Networks，ICLR（2017）。[原始记录](https://arxiv.org/abs/1609.02907) · [本地PDF](../source/papers/gcn2017.pdf)
+
+## 06 · 关键论文怎样改变同一条消息传递链
+
+早期GNN求共享状态转移的固定点，Scarselli给压缩映射条件以确保收敛。现代分层模型使用有限次前向传播。Bruna与ChebNet研究怎样在一般图定义滤波，GCN选择低阶、共享和稳定的传播。GraphSAGE处理全邻域展开与新节点表示，GAT处理邻居权重，RGCN处理关系类型，GIN分析聚合丢失的信息。
+
+后面的几何和时空模型还增加坐标对称或事件顺序约束。这些变化属于不同轴，不能用一个“更先进”替代具体问题。
+
+**原文定位**：各原始论文方法章节；Gori 2005 全文未取得，仅保留索引。
+
+- Scarselli et al.，The Graph Neural Network Model，IEEE TNN（2009）。[原始记录](https://doi.org/10.1109/TNN.2008.2005605) · [本地PDF](../source/papers/scarselli2009.pdf)
+
+- Defferrard, Bresson, Vandergheynst，Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering，NeurIPS（2016）。[原始记录](https://arxiv.org/abs/1606.09375) · [本地PDF](../source/papers/chebnet2016.pdf)
+
+- Kipf and Welling，Semi-Supervised Classification with Graph Convolutional Networks，ICLR（2017）。[原始记录](https://arxiv.org/abs/1609.02907) · [本地PDF](../source/papers/gcn2017.pdf)
+
+- Hamilton, Ying, Leskovec，Inductive Representation Learning on Large Graphs，NeurIPS（2017）。[原始记录](https://arxiv.org/abs/1706.02216) · [本地PDF](../source/papers/graphsage2017.pdf)
+
+- Velickovic et al.，Graph Attention Networks，ICLR（2018）。[原始记录](https://arxiv.org/abs/1710.10903) · [本地PDF](../source/papers/gat2018.pdf)
+
+- Schlichtkrull et al.，Modeling Relational Data with Graph Convolutional Networks，ESWC（2018）。[原始记录](https://arxiv.org/abs/1703.06103) · [本地PDF](../source/papers/rgcn2018.pdf)
+
+- Xu et al.，How Powerful are Graph Neural Networks?，ICLR（2019）。[原始记录](https://arxiv.org/abs/1810.00826) · [本地PDF](../source/papers/gin2019.pdf)
+
+## 07 · 谱图卷积的直觉：图上的“频率”描述邻居差异
+
+在网格里，低频意味着相邻像素变化慢。一般图没有统一左右方向，但仍可比较沿边两端的值是否相似。对组合拉普拉斯Lc=D−A，xᵀLcx等于每条无向边上wij(xi−xj)²的和，差异越小越平滑。谱方法将图信号分解到拉普拉斯特征向量上，再对各分量加权，最后重构。低特征值模态对应较低图变化率。组合拉普拉斯用于本页解释能量；后续ChebNet使用对称归一化L，平滑能量比较xi/√di与xj/√dj，不能不说明就混用。
+
+图卷积可学低通、高通或更复杂响应；GCN的一阶绑定版本则带有平滑偏置。
+
+**原文定位**：Bruna 2014 §3；ChebNet 2016 p3 式(1)–(4)；信号为教学构造。
+
+- Bruna et al.，Spectral Networks and Deep Locally Connected Networks on Graphs，ICLR（2014）。[原始记录](https://arxiv.org/abs/1312.6203) · [本地PDF](../source/papers/bruna2014.pdf)
+
+- Defferrard, Bresson, Vandergheynst，Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering，NeurIPS（2016）。[原始记录](https://arxiv.org/abs/1606.09375) · [本地PDF](../source/papers/chebnet2016.pdf)
+
+## 08 · ChebNet：用连续的局部计算实现谱滤波
+
+自由谱滤波依赖特征向量基U，一般为全局运算。ChebNet把滤波限制为拉普拉斯的低阶多项式。若L̃只包含一跳与对角连接，乘一次最多经过一条边，k次乘积只能影响至多k跳。用多项式组合不同次数，就组合不同范围的局部响应。切比雪夫递推t0=x,t1=L̃x,tk=2L̃tk−1−tk−2避免显式计算U。系数θk学习怎样组合响应，递推本身只负责有效地计算基函数。
+
+原文K为项数，最高次数K−1；本页用r表示最高次数以免与GCN和SAGE的K混淆。局部性是代数保证，不要求训练结果一定平滑，也不等于整层只保存简单平均。
+
+**原文定位**：Defferrard et al. 2016，p3 式(3)–(4)，p4 式(5)；路径图为教学说明。
+
+- Defferrard, Bresson, Vandergheynst，Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering，NeurIPS（2016）。[原始记录](https://arxiv.org/abs/1606.09375) · [本地PDF](../source/papers/chebnet2016.pdf)
+
+## 09 · GCN 的推导：四个选择各自解决什么问题
+
+记B=D^-1/2 A D^-1/2。第一步把Chebyshev滤波截到一阶，单层只处理自身和一跳关系，较远信息靠堆层。第二步近似λmax为2，使缩放后的L̃近似L−I=−B。第三步绑定两个系数θ0′=−θ1′=θ，得到θ(I+B)x，自身和邻居不能再独立调权。第四步将I+B替换成对A+I重新计算度的S。
+
+I+B的特征值可能大于1，多次相乘会放大某些模态；S与随机游走矩阵相似，在非负无向图纯传播部分谱半径为1。该设计缓解传播不稳定，但不保证含任意W与非线性的全网络永远稳定。重要的是最后一步不是数学恒等式，也不是仅把自环项补上。
+
+**原文定位**：GCN p2–3 式(4)–(8)；最后一步为算子替换。
+
+- Kipf and Welling，Semi-Supervised Classification with Graph Convolutional Networks，ICLR（2017）。[原始记录](https://arxiv.org/abs/1609.02907) · [本地PDF](../source/papers/gcn2017.pdf)
+
+- Defferrard, Bresson, Vandergheynst，Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering，NeurIPS（2016）。[原始记录](https://arxiv.org/abs/1606.09375) · [本地PDF](../source/papers/chebnet2016.pdf)
+
+## 10 · GCN 归一化：消息为何同时除以两端的度
+
+A—B—C加入自身连接后，A和C的度为2，B的度为3。B接收A消息的系数是1/√(3×2)，接收自身的系数是1/3。分解S=D̃^-1/2 Ã D̃^-1/2：右侧先按发送节点的度缩放特征，中间沿边累加，左侧再按接收节点的度缩放。这种对称处理让高连接节点的单条消息权重减小，同时保留无向算子对称性。它不同于按接收端度归一化的普通平均，S每行不一定和为1。
+
+教学解释中的“避免高连接节点影响过大”是对系数机制的描述，不保证在所有任务都最佳。原GCN还固定自环强度，后续设计可以改变。
+
+**原文定位**：GCN p2 式(2)、p3 式(8)；三节点权重为教学推导。
+
+- Kipf and Welling，Semi-Supervised Classification with Graph Convolutional Networks，ICLR（2017）。[原始记录](https://arxiv.org/abs/1609.02907) · [本地PDF](../source/papers/gcn2017.pdf)
+
+## 11 · GCN 的两个轴：跨节点传播与特征通道变换
+
+H每行是节点，每列是特征通道。左乘S在节点轴上组合邻居，不改变通道含义；右乘W在特征轴上重新组合各维特征，且所有节点使用相同W。把SHW拆开可以看清结构和学习的职责。S(HW)=(SH)W来自矩阵结合律，只在线性部分允许换序；ReLU插在两者之间通常不再相等。ReLU把负响应截断，使多层网络具有非线性，不能把多层GCN总写成S^K X乘一个矩阵。
+
+输出头将隐藏通道转换成类别分数，softmax在类别维归一化，交叉熵仅取训练标签。标签误差更新W；S通常由固定图预计算。
+
+**原文定位**：GCN p2 式(2)，p3–4 式(9)–(10)；线性换序为教学推导。
+
+- Kipf and Welling，Semi-Supervised Classification with Graph Convolutional Networks，ICLR（2017）。[原始记录](https://arxiv.org/abs/1609.02907) · [本地PDF](../source/papers/gcn2017.pdf)
+
+## 12 · GCN 何时有效：平滑与任务信号是否一致
+
+如果边把同类或相似语义节点连接起来，局部平滑可以减少特征噪声，使少标签节点也获得有用邻域线索。但异配图中，相邻节点可能角色相反，一味混合会抹去对任务重要的差异。反复应用S，在连通非负无向且有自环的图上，会使每通道趋向与√d̃成比例的低维子空间；不是一般不规则图上所有原始坐标值完全相等。真实深网还有W、激活、残差，所以纯扩散极限不能冒充所有训练网络的失败证明。
+
+过挤压是另一问题：很多远处节点的信息通过小割集进入有限维状态，尚未表示趋同也可能已经丢信息。异配是数据关系，过平滑是表示演化，过挤压是通信瓶颈，三者不能混为一谈。
+
+**原文定位**：Li et al. 2018 p3–4；Zhu et al. 2020 §3–4；反例为教学构造。
+
+- Kipf and Welling，Semi-Supervised Classification with Graph Convolutional Networks，ICLR（2017）。[原始记录](https://arxiv.org/abs/1609.02907) · [本地PDF](../source/papers/gcn2017.pdf)
+
+- Li, Han, Wu，Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning，AAAI（2018）。[原始记录](https://arxiv.org/abs/1801.07606) · [本地PDF](../source/papers/oversmoothing2018.pdf)
+
+- Zhu et al.，Beyond Homophily in Graph Neural Networks: Current Limitations and Effective Designs，NeurIPS（2020）。[原始记录](https://arxiv.org/abs/2006.11468) · [本地PDF](../source/papers/heterophily2020.pdf)
+
+- Alon and Yahav，On the Bottleneck of Graph Neural Networks and its Practical Implications，ICLR（2021）。[原始记录](https://arxiv.org/abs/2006.05205) · [本地PDF](../source/papers/bottleneck2021.pdf)
+
+## 13 · GraphSAGE：给新节点计算表示，而非另学一张查找表
+
+GraphSAGE从xv开始，将采样邻居状态聚合成av，再与自身状态拼接，通过共享W、非线性和L2归一化生成hv。W[h∥a]可展开为Wself h+Wneigh a，保留自身与邻域的独立角色。归纳性来自共享函数，不是采样本身；新节点只要具备语义一致的特征和可访问邻域，就可使用已学参数前向计算，不必为这个新ID重新优化专用向量。
+
+跨图时特征与标签含义仍需一致。实验新节点时间留出与PPI整图留出检验不同泛化条件，原论文不证明任意分布迁移。
+
+**原文定位**：GraphSAGE p4 算法1，p5–6 §3.1–3.3；示意图不代表原文采样数。
+
+- Hamilton, Ying, Leskovec，Inductive Representation Learning on Large Graphs，NeurIPS（2017）。[原始记录](https://arxiv.org/abs/1706.02216) · [本地PDF](../source/papers/graphsage2017.pdf)
+
+## 14 · GraphSAGE：采样近似计算，损失定义学什么
+
+确定目标节点后，先反向展开并采样各层依赖，再从最底层原始特征向上计算。采样树随层数和每层邻居数乘积增长，重叠去重会减少实际量，不能说系统总成本与图规模无关。对固定邻居向量，均匀样本均值可以无偏；递归依赖、非线性和归一化后，整个表示不保证是全邻域模型的无偏估计。训练有两条路线：监督版直接优化标签任务；无监督版把随机游走共现节点作为正上下文、按分布采节点作负上下文，以内积拉近/推远表示。
+
+无监督表示的分类评估仍使用训练标签拟合读出，不能称整条分类流程不用标签。mean和pool保持顺序对称，LSTM单次结果仍依赖顺序，随机排列不是对称性证明。
+
+**原文定位**：GraphSAGE p5 式(1)、§3.2，p12 算法2，p13–15 附录B–C。
+
+- Hamilton, Ying, Leskovec，Inductive Representation Learning on Large Graphs，NeurIPS（2017）。[原始记录](https://arxiv.org/abs/1706.02216) · [本地PDF](../source/papers/graphsage2017.pdf)
+
+## 15 · GAT：在允许的邻居中学习怎样分配权重
+
+原始GAT先用共享W将每个节点投影为zi，再将目标和候选邻居的投影拼接，经过共享打分向量a和LeakyReLU得到逐边logit。softmax只在给定邻域含自环内归一化，得到α，最后加权求和并激活。GCN系数由结构和度数给定；GAT系数还随输入特征变化。边掩码决定能否交流，注意力决定已有通道分配多少权重；原GAT不会自动把不相连但相似的节点接成边。
+
+注意力的归一化发生在邻居维，节点分类softmax发生在类别维，二者不同。权重是内部计算系数，单独观察α不能得出因果重要性。
+
+**原文定位**：GAT p3–4 式(1)–(6)、图1；图为同一张链的教学示意。
+
+- Velickovic et al.，Graph Attention Networks，ICLR（2018）。[原始记录](https://arxiv.org/abs/1710.10903) · [本地PDF](../source/papers/gat2018.pdf)
+
+## 16 · GAT 的多头：并行看不同特征，而非扩大邻域
+
+多头使用各自W与a在同一邻域独立计算聚合，可以学习不同投影与关注模式。隐藏层拼接各头结果，扩大输出通道；最终输出层平均各头，再作任务激活。多头不会新增边，也不直接增大这一层的图感受野。更细的原式限制：将a分成左右两半，aᵀ[zi∥zj]=ci+qj。LeakyReLU严格单调，所以给定相同候选集合，同一头中候选按qj的排序不随目标i改变。
+
+如果全部logit落在同一线性段，ci在softmax中抵消；跨分段时权重数值可改变，但排序仍不改变。这是由原式推出的教学分析，不冒充原文新实验。原论文常量注意力的同架构消融比跨论文最佳分数更接近隔离注意力机制，但只支持指定PPI设定，不支持所有图上必优。
+
+**原文定位**：GAT p4 式(5)–(6)，p8 表3；排序限制由原式教学推导。
+
+- Velickovic et al.，Graph Attention Networks，ICLR（2018）。[原始记录](https://arxiv.org/abs/1710.10903) · [本地PDF](../source/papers/gat2018.pdf)
+
+## 17 · R-GCN：边的含义决定消息经过哪种变换
+
+普通聚合把各邻居用同一变换处理，可能忽略关系含义。RGCN先按关系类型分组，对每类使用Wr，把消息按关系内归一化后相加，再加入W0处理自身。正关系与逆关系作为不同传播类型，方向是模型输入的一部分。图中的箭头表示消息传入中心：若事实为“人在公司任职”，公司传给人的消息使用该事实的逆关系类型。独立Wr在关系多且样本稀少时参数膨胀，基分解令各关系矩阵由共享Vb线性组合，关系只学习组合系数arb。
+
+共享的是一组基础变换，不是把全部关系变成同一个权重。另一种块对角分解限制跨通道块交互，属于不同约束。减少参数可能帮助稀有关系，也限制矩阵空间；不保证耗时按参数比例下降。
+
+**原文定位**：R-GCN p2 式(2)–(3)，p3 式(4)、图2；语义图为教学构造。
+
+- Schlichtkrull et al.，Modeling Relational Data with Graph Convolutional Networks，ESWC（2018）。[原始记录](https://arxiv.org/abs/1703.06103) · [本地PDF](../source/papers/rgcn2018.pdf)
+
+## 18 · R-GCN 的编码器与解码器：上下文和评分各管什么
+
+编码器把已有关系事实压进实体表示，解码器再对候选三元组打分。原文使用DistMult，f(s,r,o)=esᵀdiag(r)eo。对固定实体向量和同一r，交换s和o得到同一分数，因此即使RGCN编码器利用了方向，DistMult对同一关系仍不能表达任意非对称性。父母关系的方向例子直观说明这一点。额外引入逆关系标签可以学习另一套关系参数，但不消除原关系交换端点的代数对称。
+
+训练用腐化端点的采样负例和sigmoid损失，未观察到不一定为假。评估必须区分候选集和过滤规则，特别注意逆关系捷径。论文主评FB15k-237避免旧数据中大量逆关系泄漏问题；这与模型是否更会推理是不同维度。
+
+**原文定位**：R-GCN p3–4 图3、式(6)–(7)，p6 表5及讨论；对称性为教学推导。
+
+- Schlichtkrull et al.，Modeling Relational Data with Graph Convolutional Networks，ESWC（2018）。[原始记录](https://arxiv.org/abs/1703.06103) · [本地PDF](../source/papers/rgcn2018.pdf)
+
+## 19 · GIN 的出发点：聚合可能提前丢掉什么信息
+
+邻域是多重集，既包含有哪些特征，也包含各特征出现几次。取a和b为两种不同编码，X={a,b}，Y={a,a,b,b}，对任意逐点编码f，mean(X)=mean(Y)，因为比例相同；max对重复出现也不敏感。sum在适当编码下保留计数，有希望区分这些集合。但未经编码的原始向量直接sum不一定单射，例如标量{1,3}与{2,2}都为4，一旦相加碰撞，后面的MLP无法还原。
+
+GIN的理论是存在合适编码f使求和单射，在可数输入和有界多重集等条件下成立，不是任意浮点向量求和都能区分。实际网络通过前层与MLP学习表示，不保证优化后达到精确单射。
+
+**原文定位**：GIN p5–8 §4–5、图2–3；多重集例子按原文性质教学构造。
+
+- Xu et al.，How Powerful are Graph Neural Networks?，ICLR（2019）。[原始记录](https://arxiv.org/abs/1810.00826) · [本地PDF](../source/papers/gin2019.pdf)
+
+## 20 · GIN 与 1-WL：每一轮怎样保留结构差别
+
+1-WL颜色细化把中心旧颜色和邻居颜色多重集作为新颜色的依据，只要输入对不同就分配不同新颜色。共享邻域聚合GNN若收到同样旧状态与多重集，输出必相同，因此不能超越该过程可区分的结构。反向充分性要求聚合、中心组合和readout都单射，层数足够，才可保留每轮颜色差异。Lemma5在可数特征、有界多重集下构造f，使sum f(x)像不进位的计数编码。
+
+Corollary6把中心角色也编码进来。GIN用MLP((1+ε)hv+Σhu)实现该动机；ε=0时，中心a邻居b与中心b邻居a在该局部输入上碰撞。无理数ε是理论充分构造之一，不等于任意学习出的ε必保证单射。实际GIN-0也可能泛化较好，说明表达能力、优化与泛化是不同问题。
+
+**原文定位**：GIN p4 Lemma2 / Theorem3，p5 Lemma5 / Corollary6，p6 式(4.2)。
+
+- Xu et al.，How Powerful are Graph Neural Networks?，ICLR（2019）。[原始记录](https://arxiv.org/abs/1810.00826) · [本地PDF](../source/papers/gin2019.pdf)
+
+## 21 · GIN 的边界：同样的邻域颜色可能隐藏不同整图
+
+取六节点环C6与两个互不相连三角形2C3。所有节点初始特征同为a，且每个节点都恰有两个邻居。第一轮每个节点看到中心a与{a,a}，所以颜色一致。归纳地，任意后续轮各节点仍看到相同颜色及相同重复数，因此两图每轮的六个节点状态多重集相同。任何只依赖这些状态的排列不变readout都相同。两图显然不同：一个连通且无三角形，另一个不连通且含三角形。
+
+达到1-WL上界的GIN也分不出这个例子，多堆层无效。这个结论假设没有额外节点ID、位置特征或高阶机制；加入新结构信息已改变模型可用输入。
+
+**原文定位**：GIN p4 Lemma2 / Theorem3；C₆ 与 2C₃ 为本讲教学反例。
+
+- Xu et al.，How Powerful are Graph Neural Networks?，ICLR（2019）。[原始记录](https://arxiv.org/abs/1810.00826) · [本地PDF](../source/papers/gin2019.pdf)
+
+## 22 · MPNN 的分子实例：键决定变换，读出组合原子
+
+MPNN统一消息函数M、更新U与读出R，框架中可替换各部分。原文edge network根据边属性生成矩阵A(e)，消息为A(evu)hu：同一原子状态沿不同键或距离可产生不同消息。相比把原子和边分别求和，这保留谁沿哪条边发来的关联。GRU把旧状态与聚合消息融合，经过多轮后形成原子表示。门控sum或set2set把原子集合变成图表示，set2set用循环注意力按需读集合，输出不依赖节点排列。
+
+最终预测的是分子性质，原论文QM9标签主要来自DFT计算。训练标准化目标并优化MSE，评估MAE。其部分无空间消融使用DFT partial charge，作者明确该输入在应用中不可直接取得，讲解机制时不能省掉输入可得性。
+
+**原文定位**：MPNN p3 式(1)–(4)，p5–6 §5.1–5.3，p7–8 §8。
+
+- Gilmer et al.，Neural Message Passing for Quantum Chemistry，ICML（2017）。[原始记录](https://arxiv.org/abs/1704.01212) · [本地PDF](../source/papers/mpnn2017.pdf)
+
+## 23 · PinSage：先找到有用邻域，再学习相似候选的差别
+
+PinSage在pin–board二部图上从query出发作短随机游走，按访问频率取重要邻居并归一化为权重。它不是平均全部一跳邻居；游走把更远的共现关系汇总成有限邻域。每个邻居先变换再作重要性加权，与自身拼接、变换和归一化。训练使用margin ranking hinge：正例相似度要超过负例相似度一定间隔。
+
+随机负例往往过容易，模型已经把它排远后不再产生梯度；困难负例与正例更像，迫使表示学习细粒度差异。作者用课程方式渐增hard negatives，避免一开始过难。训练时CPU采样和取特征、GPU计算局部批次；离线MapReduce逐层生成全图embedding；线上近邻检索复用这些embedding，不是每个请求全图前向。
+
+原文离线Hit-rate和缩放MRR有特殊候选及排名定义，不能直接当线上点击增益。
+
+**原文定位**：PinSage p4 算法1，p5 式(1)，p6 §3.4–3.5；p8 指标定义。
+
+- Ying et al.，Graph Convolutional Neural Networks for Web-Scale Recommender Systems，KDD（2018）。[原始记录](https://arxiv.org/abs/1806.01973) · [本地PDF](../source/papers/pinsage2018.pdf)
+
+## 24 · LightGCN：传播 ID 嵌入，让共同交互产生相似性
+
+LightGCN针对用户–物品隐式反馈图，输入为可训练ID向量。节点初值没有像文本或图像那样固定语义通道，作者通过NGCF消融提出去掉层间W与非线性。传播只作D^-1/2 A D^-1/2的归一化邻居求和，不额外加自环；最终组合零层到K层状态，因此原始ID信息仍可保留。在二部图上，一跳用户吸收物品状态，两跳又回到共享交互的用户，这解释高阶协同信号。
+
+线性展开E=P(S)E0=Σαk S^k E0，表示多种路径长度的滤波组合。该式不代表每条路径权重相等，度归一化和不同长度系数仍作用。论文在ID协同过滤中的优化观察不能推广到丰富语义特征的所有图任务。
+
+**原文定位**：LightGCN p3–4 §2.2–3.1，式(3)–(5)；路径解释为教学推导。
+
+- He et al.，LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation，SIGIR（2020）。[原始记录](https://arxiv.org/abs/2002.02126) · [本地PDF](../source/papers/lightgcn2020.pdf)
+
+## 25 · LightGCN 的学习：误差怎样回到初始 ID 向量
+
+用户物品得分是最终向量内积，BPR损失最大化已交互i相对于未观测j的得分差。损失对最终嵌入产生梯度，沿线性的多跳传播回到E0，所以删掉传播W不意味着无训练。教学代数：E=P(S)E0，S与α固定时∂L/∂E0=P(S)ᵀ∂L/∂E。图上的邻居因此耦合初始向量的更新。BPR使用未观测为对比近似，不能认定用户真的不喜欢j。
+
+层组合使浅层和深层信号共存，但均匀权重并非每任务最优；作者有单层配置更优的反例。消融中去掉非线性单独一步也非全数据提升，结论是特定ID推荐中简化有利于优化，不是复杂模块在理论上永远无用。
+
+**原文定位**：LightGCN p4 式(5)，p5 式(15)；梯度展开为教学推导。
+
+- He et al.，LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation，SIGIR（2020）。[原始记录](https://arxiv.org/abs/2002.02126) · [本地PDF](../source/papers/lightgcn2020.pdf)
+
+## 26 · DCRNN：空间扩散进入循环单元，时间状态继续传递
+
+DCRNN同时处理两个方向：路网空间上的有向扩散与观测随时间演化。原文W_ij表示i到j，出度DO=diag(W1)，入度DI=diag(Wᵀ1)，Pf=DO^-1 W，Pb=DI^-1 Wᵀ。滤波把不同扩散步数的Pf^k X和Pb^k X用可训练系数组合。它们提供上下游可用信息通道，并不是精确求解交通物理方程。
+
+DCGRU将GRU门和候选状态中的稠密线性映射替换为扩散卷积，隐状态沿时间传递。编码器读历史，解码器递归预测未来。训练纯喂真值而推理喂预测会导致输入分布差异，scheduled sampling逐渐让训练使用自身预测；它缓解差异，但不保证长时滚动无误差。
+
+**原文定位**：DCRNN p2–4 §2、式(2)–(4)、图2；p7–8 消融。
+
+- Yaguang Li, Rose Yu, Cyrus Shahabi, Yan Liu，Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting，ICLR（2018）。[原始记录](https://arxiv.org/abs/1707.01926v3) · [本地PDF](../source/papers/dcrnn2018.pdf)
+
+## 27 · TGN：事件更新记忆，预测只能使用过去
+
+静态图把多次交互合并，容易丢失发生顺序。TGN把事件eij(t)作为基本输入，消息可由事件前双方记忆si(t−)、sj(t−)、时间间隔和事件特征形成；聚合多个消息后用GRU等更新记忆，embedding模块再结合邻居记忆与时间信息生成查询时表示。记忆是历史状态，不等于最终embedding。训练存在微妙矛盾：若当前事件更新后才预测自己会泄漏；若完全在预测后做无梯度的更新，memory模块无法直接收到这批损失梯度。
+
+原文用raw message store保存过去事件，在下一批先由过去消息更新记忆、再预测当前批、最后缓存当前消息。整批共享相同记忆快照，批越大后部事件越看不到本批较早事件，吞吐与陈旧度需权衡。按时间切分还要检查特征、邻居和记忆是否按时点生成。
+
+**原文定位**：TGN p3–5 §3、式(1)–(5)、图2；p7 §5。
+
+- Emanuele Rossi et al.，Temporal Graph Networks for Deep Learning on Dynamic Graphs，arXiv preprint / ICML 2020 GRL+ workshop（2020）。[原始记录](https://arxiv.org/abs/2006.10637v3) · [本地PDF](../source/papers/tgn2020.pdf)
+
+## 28 · EGNN：属性保持不变，坐标随整体变换一起变化
+
+把分子或粒子系统整体平移旋转后，原子类型、距离和某些标量性质应不变；预测位置、力等向量则应随坐标系一起变换。前者叫不变，后者叫等变。EGNN把输入分成标量特征h与几何坐标x。消息网络只读取h、边属性和距离平方，因此输入整体变换时消息保持不变；坐标更新使用相对位移向量乘标量系数，所以方向自然跟着几何改变。
+
+它不需要MLP从有限增强样本中猜出所有旋转规律。等变性只描述坐标变换下的行为约束，不保证模型满足全部守恒定律或动力学稳定性。原式E(n)还含反射，下一页展开其证明与边界。
+
+**原文定位**：EGNN p2–3 式(3)–(6)、§3.1；示意几何为教学构造。
+
+- Satorras, Hoogeboom, Welling，E(n) Equivariant Graph Neural Networks，ICML（2021）。[原始记录](https://arxiv.org/abs/2102.09844) · [本地PDF](../source/papers/egnn2021.pdf)
+
+## 29 · EGNN 的等变证明：方向来自坐标，强度来自 MLP
+
+设变换x̃i=Qxi+t，QᵀQ=I。相对位置变为Q(xi−xj)，范数平方不变，所以消息mij=φe(hi,hj,||xi−xj||²,aij)保持不变，标量φx(mij)也不变。坐标更新xi′=xi+CΣ(xi−xj)φx(mij)，变换后每个向量都左乘Q，代数整理得到x̃i′=Qxi′+t。特征更新hi′=φh(hi,Σmij)仍不变，逐层归纳即可保留性质。
+
+Q包含反射，故若输入只有标量属性与距离、输出要求不变标量，镜像构型可能无法区分；坐标输出仍会随镜像等变，不能说整个EGNN完全不能表达手性。手性提醒来自公式推论，非原文此处做过的实验。
+
+**原文定位**：EGNN p2 式(3)–(6)，p3 §3.1、附录A；镜像限制为教学推论。
+
+- Satorras, Hoogeboom, Welling，E(n) Equivariant Graph Neural Networks，ICML（2021）。[原始记录](https://arxiv.org/abs/2102.09844) · [本地PDF](../source/papers/egnn2021.pdf)
+
+## 30 · GraphGPS：局部与全局并行，结构编码补足位置
+
+GraphGPS将节点状态在同层并行送入local MPNN和global attention，两支各自残差归一化后相加并进入MLP；边属性进入local分支，不是先MPNN再attention的串行层。局部支路沿真实边提取邻域归纳偏置，全局支路允许远节点直接交流，PE/SE把结构位置或角色加入输入。
+
+纯attention若节点初始特征相同、没有结构信息，会把相同节点对称处理；位置结构编码用于打破这些不可分辨性，但编码选择会决定保留的信息及稳定性。标准全注意力仍为O(N²)，线性attention的线性复杂度以固定宽度并排除结构编码预处理等为条件。原文ZINC消融去global后误差持平，说明局部子结构任务不必从全局支路获益。
+
+**原文定位**：GraphGPS p5 式(1)–(4)，p6 复杂度，p20 表B.1。
+
+- Rampasek et al.，Recipe for a General, Powerful, Scalable Graph Transformer，NeurIPS（2022）。[原始记录](https://arxiv.org/abs/2205.12454) · [本地PDF](../source/papers/graphgps2022.pdf)
+
+## 31 · GraphCast：在多尺度图上学习下一步状态变化
+
+GraphCast输入连续两时刻天气状态以及forcing/static信息，通过Grid2Mesh编码到球面多尺度网格，在mesh processor沿不同尺度边传播，再Mesh2Grid解码回经纬网。输出是去标准化后的状态残差，与最新输入状态相加形成下一帧，之后把预测帧作为下一次输入，逐步滚动。多尺度边让远处信息经过较短图路径交互，不是在百万网格上做标准全注意力。
+
+损失是变量、层次、格点面积加权MSE：面积权重避免经纬网极区格点密集导致过计数，变量归一化避免量纲大者垄断误差，任务权重改变优化重点。多步自回归训练对完整展开序列反传，减少仅训练一步的分布差异；较长预测仍可能积累误差，MSE也可能鼓励模糊。原文部分平流层目标落后于HRES，不能说所有指标都胜。
+
+**原文定位**：GraphCast p25–33 式(4)–(5)、式(19)、§4；主文图1。
+
+- Lam et al.，Learning skillful medium-range global weather forecasting，Science（2023）。[原始记录](https://arxiv.org/abs/2212.12794) · [本地PDF](../source/papers/graphcast2023.pdf)
+
+## 32 · GNoME：GNN 筛选候选，DFT 建立新的验证数据
+
+GNoME不是让GNN直接宣告材料已被合成。结构候选通过原子节点和距离边建图，模型预测形成能等信息筛选，再对保留候选进行DFT结构弛豫与能量计算。计算结果既用于验证，也回流到训练与下一轮候选生成，形成主动学习闭环。稳定性以与竞争相组合的能量凸包比较为核心：若候选能量高于同组成的相混合最低能量，就可能分解；加入新低能结构后，旧凸包会下降，原先稳定的候选可能失去稳定性。
+
+原论文对旧凸包和更新凸包的数量口径不同，不能合并为“发现并合成”的数量。DFT稳定还取决于近似泛函、温压条件与动力学，实验合成可行性是更后一级证据。模型预测误差和候选筛选命中率也属不同指标。
+
+**原文定位**：GNoME p1–4 主文、图1–2，p7–8 Methods；凸包说明为教学解释。
+
+- Merchant et al.，Scaling deep learning for materials discovery，Nature（2023）。[原始记录](https://doi.org/10.1038/s41586-023-06735-9) · [本地PDF](../source/papers/gnome2023.pdf)
+
+## 33 · GNN 与语言模型：文本语义和图结构怎样分工
+
+原综述将LLM角色分为Predictor、Encoder、Aligner，图场景pure/text-attributed/text-paired是另一条分类轴。Encoder可先把节点文本编码成向量，GNN再沿边传播，分别处理语义与关系；Predictor把序列化图、结构摘要或图表示交给语言模型预测；Aligner通过伪标签、蒸馏或对比损失对齐语言与图表示。
+
+Aligner并不必然意味着两模型端到端训练。信息通路必须按实际架构画清：文本是否含目标答案，边是否来自未来事件，图信息究竟进入哪些模块。GraphRAG是一类检索组织方式，图检索本身不要求训练GNN，这一界限见仓库官方网页核查；本页以原综述角色为主，不把GraphRAG当某一种GNN。
+
+**原文定位**：Jin et al. 2024，p4–5 §3.1–3.2，p8–10 图3–5。
+
+- Bowen Jin, Gang Liu, Chi Han, Meng Jiang, Heng Ji, Jiawei Han，Large Language Models on Graphs: A Comprehensive Survey，IEEE TKDE 36(12):8622–8642, 2024（2024）。[原始记录](https://arxiv.org/abs/2312.02783v4) · [本地PDF](../source/papers/llm-graphs2024.pdf)
+
+## 34 · 方法对照：先定位缺少哪种信息，再选择模型
+
+模型选择先检查数据与任务约束。GCN适合作为浅层归一化传播基线，但关系是否支持平滑需要验证。SAGE处理依赖采样和共享新节点编码；GAT在现有边内学习特征相关权重；RGCN按关系类型区分消息；GIN研究聚合计数和单射条件；EGNN加入几何变换约束；TGN按事件历史与可见时间组织记忆；GraphGPS为局部、全局和结构编码的组合框架。
+
+它们不是按年份递增的通用优劣排名。每次替换模块要问想保留什么信息，损失函数是否真的奖励这种信息，评估划分是否检验所声称的能力。
+
+**原文定位**：各论文方法章节；本表为基于机制的教学归纳。
+
+- Kipf and Welling，Semi-Supervised Classification with Graph Convolutional Networks，ICLR（2017）。[原始记录](https://arxiv.org/abs/1609.02907) · [本地PDF](../source/papers/gcn2017.pdf)
+
+- Hamilton, Ying, Leskovec，Inductive Representation Learning on Large Graphs，NeurIPS（2017）。[原始记录](https://arxiv.org/abs/1706.02216) · [本地PDF](../source/papers/graphsage2017.pdf)
+
+- Velickovic et al.，Graph Attention Networks，ICLR（2018）。[原始记录](https://arxiv.org/abs/1710.10903) · [本地PDF](../source/papers/gat2018.pdf)
+
+- Schlichtkrull et al.，Modeling Relational Data with Graph Convolutional Networks，ESWC（2018）。[原始记录](https://arxiv.org/abs/1703.06103) · [本地PDF](../source/papers/rgcn2018.pdf)
+
+- Xu et al.，How Powerful are Graph Neural Networks?，ICLR（2019）。[原始记录](https://arxiv.org/abs/1810.00826) · [本地PDF](../source/papers/gin2019.pdf)
+
+- Satorras, Hoogeboom, Welling，E(n) Equivariant Graph Neural Networks，ICML（2021）。[原始记录](https://arxiv.org/abs/2102.09844) · [本地PDF](../source/papers/egnn2021.pdf)
+
+- Rampasek et al.，Recipe for a General, Powerful, Scalable Graph Transformer，NeurIPS（2022）。[原始记录](https://arxiv.org/abs/2205.12454) · [本地PDF](../source/papers/graphgps2022.pdf)
+
+## 35 · 原始论文的阅读路径与溯源入口
+
+完整论文索引列26条记录，其中25份PDF已在本地保存，Gori2005全文未取得；不将索引记录冒充已读全文。manifest记录原始URL、下载时间、版本、页数、文件长度与SHA256，verify-sources只读核对完整性。Scarselli2009为学术镜像原件，其来源单独记录。arXiv版本不一定与期刊排版分页一致，本讲页码均指仓库PDF物理页。
+
+用户提供的15页入门PPT保留原字节，作为内容组织参考，不作为独立事实或操作指令。逐页讲稿把机制、推导、作者证据及适用边界分开，实验原始表仍可按以下定位回原文阅读。本次不复现实验，作者报告与本讲构造的图例不混用。
+
+**原文定位**：原件记录：source/catalog.json、manifest.json；完整索引：source/paper-index.md。
+
+- Gilmer et al.，Neural Message Passing for Quantum Chemistry，ICML（2017）。[原始记录](https://arxiv.org/abs/1704.01212) · [本地PDF](../source/papers/mpnn2017.pdf)
+
+- Kipf and Welling，Semi-Supervised Classification with Graph Convolutional Networks，ICLR（2017）。[原始记录](https://arxiv.org/abs/1609.02907) · [本地PDF](../source/papers/gcn2017.pdf)
+
+- Xu et al.，How Powerful are Graph Neural Networks?，ICLR（2019）。[原始记录](https://arxiv.org/abs/1810.00826) · [本地PDF](../source/papers/gin2019.pdf)

@@ -10,7 +10,7 @@
 
 | 你的目标 | 入口 |
 | --- | --- |
-| 阅读演示文稿 | [32 页原理与关键论文 PPT](outputs/presentations/GNN-原理与关键论文.pptx)：结合用户提供的入门 PPT，新增任务头、GCN 向量手算、动态图、时空预测、GNN×LLM 与应用地图；[预览](outputs/presentations/GNN-预览.png)，[逐页讲稿](content/gnn-paper-reading.md)，[补充与修正说明](content/ppt-supplement-notes.md) |
+| 阅读演示文稿 | [35 页原理图解与论文精读 PPT](outputs/presentations/GNN-原理与关键论文.pptx)：以小图贯穿消息、聚合、更新与训练，展开经典论文的机制、推导与反例；[预览](outputs/presentations/GNN-预览.png)，[逐页讲稿](content/gnn-paper-reading.md)，[补充与修正说明](content/ppt-supplement-notes.md) |
 | 直观看懂 GNN | [离线交互介绍](outputs/gnn-guide.html)：选节点、改边、切换归一化、逐层传消息 |
 | 在 GitHub 直接阅读 | [原理与应用介绍](content/gnn-introduction.md) |
 | 找经典论文与历史里程碑 | [论文索引与原始 PDF](source/paper-index.md) |
@@ -19,7 +19,7 @@
 
 GitHub 文件页显示 HTML 源码；克隆或下载整个仓库后，在浏览器打开 `outputs/gnn-guide.html` 才能使用交互。阅读页完全离线；首次安装 Python 依赖需要联网。
 
-演示文稿共32页，采用16:9版式，展开核心公式、手算推导、论文实验协议、适用边界与应用证据。文字、公式、表格和数据图表可编辑；论文原图来自本地原始PDF。实验数值均为作者报告，本次未重新复现。
+演示文稿共35页，采用16:9版式。用同一张小图解释消息传递、共享参数和训练，展开GCN推导、GAT权重、GIN结构判别反例，以及几何、时间与科学应用机制。正文移除基准数字表，必要公式紧跟直观解释；文字、公式、关系图和流程图均可编辑。逐页讲稿保留原文定位、理论前提和实验边界，本次未重新复现论文实验。
 
 当前展示材料只保留一套PPT、预览和逐页讲稿。PPT不含Demo与运行命令；训练代码和固定参考实验独立保留。旧版可从[清理前的Git版本](https://github.com/guozongzhi/GNN/tree/ade736007a12c5c8680e6ebce2b54ab1405dc5c1)恢复。
 
