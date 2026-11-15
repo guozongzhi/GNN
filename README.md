@@ -2,7 +2,7 @@
 
 [![Checks](https://github.com/guozongzhi/GNN/actions/workflows/checks.yml/badge.svg)](https://github.com/guozongzhi/GNN/actions/workflows/checks.yml)
 
-中文图神经网络学习包：**可交互原理介绍、26 篇论文索引、25 份原始 PDF，以及可在 CPU 上训练和评估的 PyTorch Demo。** 既有部署资料核查于2026-11-10；补充论文核查于2026-11-15。
+中文图神经网络学习包：**可交互原理介绍、31 篇论文索引、30 份原始 PDF，以及可在 CPU 上训练和评估的 PyTorch Demo。** 既有部署资料核查于2026-11-10；补充论文核查于2026-11-15。
 
 ![消息传递交互预览](outputs/message-passing.png)
 
@@ -10,7 +10,7 @@
 
 | 你的目标 | 入口 |
 | --- | --- |
-| 阅读演示文稿 | [35 页原理图解与论文精读 PPT](outputs/presentations/GNN-原理与关键论文.pptx)：以小图贯穿消息、聚合、更新与训练，展开经典论文的机制、推导与反例；[预览](outputs/presentations/GNN-预览.png)，[逐页讲稿](content/gnn-paper-reading.md)，[补充与修正说明](content/ppt-supplement-notes.md) |
+| 阅读演示文稿 | [26 页发展脉络与 GCN / GAT 精读 PPT](outputs/presentations/GNN-原理与关键论文.pptx)：聚焦GNN发展、GCN与GAT机制，以及与Transformer的关键比较；[预览](outputs/presentations/GNN-预览.png)，[逐页讲稿](content/gnn-paper-reading.md)，[补充与修正说明](content/ppt-supplement-notes.md) |
 | 直观看懂 GNN | [离线交互介绍](outputs/gnn-guide.html)：选节点、改边、切换归一化、逐层传消息 |
 | 在 GitHub 直接阅读 | [原理与应用介绍](content/gnn-introduction.md) |
 | 找经典论文与历史里程碑 | [论文索引与原始 PDF](source/paper-index.md) |
@@ -19,7 +19,7 @@
 
 GitHub 文件页显示 HTML 源码；克隆或下载整个仓库后，在浏览器打开 `outputs/gnn-guide.html` 才能使用交互。阅读页完全离线；首次安装 Python 依赖需要联网。
 
-演示文稿共35页，采用16:9版式。用同一张小图解释消息传递、共享参数和训练，展开GCN推导、GAT权重、GIN结构判别反例，以及几何、时间与科学应用机制。正文移除基准数字表，必要公式紧跟直观解释；文字、公式、关系图和流程图均可编辑。逐页讲稿保留原文定位、理论前提和实验边界，本次未重新复现论文实验。
+演示文稿共26页，采用16:9版式。发展部分交代从谱卷积、GCN/GAT到图Transformer和跨图复用的脉络；其中12页集中展开GCN与GAT，再比较通信掩码、注意力打分、Q/K/V、结构编码与成本。正文保留必要公式和反例，配直观解释，不堆放性能数字。文字、公式、表格与原理图均可编辑；逐页讲稿保留原文页码和边界。
 
 当前展示材料只保留一套PPT、预览和逐页讲稿。PPT不含Demo与运行命令；训练代码和固定参考实验独立保留。旧版可从[清理前的Git版本](https://github.com/guozongzhi/GNN/tree/ade736007a12c5c8680e6ebce2b54ab1405dc5c1)恢复。
 
@@ -111,7 +111,7 @@ python tools/check-report.py runs/first
 
 `source/catalog.json` 定义阅读索引，`source/manifest.json` 记录 PDF 来源、原始下载时间、版本标记、页数、字节与 SHA-256。`source/web-manifest.json` 记录官方网页快照及明确的获取失败项。
 
-- `python tools/verify-sources.py`：只读核验 25 份 PDF 与 6 份网页原件，无需联网。
+- `python tools/verify-sources.py`：只读核验 30 份 PDF 与 6 份网页原件，无需联网。
 - `python tools/fetch-papers.py`：复用已有文件或补下载。保留历史下载时间；没有可信时间时留空，不使用 clone 时间代替。若与已记录哈希不一致，保留原清单并写入 `tmp/download-report.json`。
 - 更新论文版本时，应先另存旧文件与清单，再明确更新目标记录；不把新的下载结果默认为旧原文。
 - Gori 2005 未取得开放全文；Scarselli 2009 是学术镜像副本；arXiv 文件不一定与出版社排版一致。论文版权归原权利人。

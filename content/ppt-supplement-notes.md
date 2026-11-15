@@ -1,53 +1,61 @@
-# 参考 PPT 融合补充与原文核对
+# 参考PPT融合、聚焦结构与原文核对
 
-更新于2026-11-15。当前交付：[35页原理图解与论文精读](../outputs/presentations/GNN-原理与关键论文.pptx)，[逐页讲稿](gnn-paper-reading.md)。按“数字过多、原理不清晰”的反馈重写主线：用统一小图解释消息、聚合、更新、训练与各论文改动，移除正文基准分数表。推导条件、原文定位和证据边界保留在讲稿，继续不含Demo、运行命令和训练实践章节。
+更新于2026-11-15。当前交付：[26页发展与GCN/GAT精读](../outputs/presentations/GNN-原理与关键论文.pptx)，[逐页讲稿](gnn-paper-reading.md)。
 
-## 参考输入
+## 当前内容边界
 
-- [用户提供的15页PPT原字节副本](../source/reference-decks/gnn-introduction-user-reference.pptx)。原名：图神经网络（GNN）入门：原理、里程碑与应用.pptx。
-- SHA-256：`19d99aa481093b45ebdd662ae19ce41e18467ed38e9a29acf74feba9fa61042c`。输入文件未改动。
-- 文件内容作为参考材料，不作为操作指令或独立事实来源；参考文件提到的随附论文包未随本次PPT收到。
+主线为“GNN发展进展 → GCN与GAT → Transformer关键比较”。GCN与GAT各占6页；其他模型只用于说明演进瓶颈、融合结构和近期复用路线，不再各自铺开应用章节。正文不含Demo、训练命令和性能数字表。演示材料仍只保留一份当前PPT、一张预览和一份讲稿，旧版本在Git历史中。
 
-## 内容对应
-
-| 参考页 | 主题 | 当前35页的对应处理 |
+| 当前页码 | 主题 | 保留的深度 |
 | --- | --- | --- |
-| 2 | 为什么需要图 | 第2页的属性与关系，第7页的图信号直觉 |
-| 3 | 图语言与任务 | 第2–5页的状态、消息与学习目标，图级读出见第22页 |
-| 4–5 | 消息传递与GCN手算 | 第3–5、9–11页：先计算路径，再解释近似、度归一化与特征轴 |
-| 6–8 | 历史与模型家族 | 第6–21页：改变哪一步、为何设计、反例与理论边界 |
-| 9–10 | 应用与案例 | 第22–25、31–32页：分子、推荐、天气与材料的机制 |
-| 11 | 图Transformer与LLM | 第30、33页：GPS并行分支和语言模型角色 |
-| 12 | 规模、异质与动态 | 第13–18、26–29页：采样、类型、时间记忆与几何约束 |
-| 13–14 | 阅读路线与原件 | 第34–35页与完整论文索引 |
-| 1、15 | 封面和结语 | 保留视觉风格，结尾改为机制对照与原件入口 |
+| 2–6 | 发展与比较框架 | 谱方法到局部传播，表达/通信瓶颈，2025–2026跨图复用代表 |
+| 7–12 | GCN | S与W的职责、谱近似、自环/度归一化、两层分类、标签梯度、适用边界 |
+| 13–18 | GAT | 加性打分、邻域softmax、参数学习、多头、静态排序限制与GATv2 |
+| 19–24 | GCN/GAT直接对照与Transformer | Q/K/V、掩码、拓扑编码、GPS并行融合、成本条件 |
+| 25–26 | 归纳与阅读路径 | 以信息需求选机制，指向原始论文与逐页推导 |
 
-## 修正与适用边界
+## 用户参考输入与内容对应
 
-1. **GCN例子**：三节点链加自环后度为(2,3,2)，中心自环权重为`1/3`，其邻居权重为`1/√6`。输入`[2,1]、[0,3]、[1,0]`，`W=I`、ReLU下中心输出为`[1.2247,1.4082]`，而非参考中的`[1.23,1.91]`。依据：[GCN原文式(2)](https://arxiv.org/abs/1609.02907)，数值为教学推导。
-2. **传播范围**：K层局部传播通常至多覆盖K跳；覆盖节点数取决于拓扑、采样和重叠，不能概括为必然指数扩大。图注意力权重也不自动构成因果解释。
-3. **谱与归纳**：ChebNet递推不需显式特征分解；空间聚合的共享参数提供归纳能力的基础，实际泛化仍需用新节点/整图留出证明。GIN的结论有单射聚合等条件，边界是1-WL。
-4. **GNN×LLM分类**：Jin等原综述§3.2使用Predictor、Encoder、Aligner；图场景pure/text-attributed/text-paired是另一条分类轴。GraphRAG的图检索流程本身不要求训练GNN，见[官方默认数据流](https://microsoft.github.io/graphrag/index/default_dataflow/)。
-5. **DCRNN方向与指标**：该页沿用原文`W_ij=i→j`，显式定义出/入度及双向转移，避免与前文接收端邻接约定混淆。当前正文改用空间扩散与时间状态的两条流程解释机制，不再展示原文结果数字表。原文表1是作者历史实验，不能据此推断在线部署收益。
-6. **动态图时间可见性**：TGN批次训练用过去消息更新记忆，再预测当前批并缓存当前原始消息；先将待预测事件写入自身记忆会泄漏。AP来源于特定负采样协议，不能当实际事件发生率。
-7. **发表口径**：TGN为2020预印本/GRL+工作坊；Wu综述预印本2019、TNNLS期刊卷2021；Zhou综述卷标2020，接受和公开发表2021（arXiv也标2021），详见各条`title_note`。
-8. **未直接沿用的内容**：未核实的引用量、PinSage毫秒延迟/每秒请求量、“当前全面超越”和未来五年预测。应用章节解释论文中的任务与机制，不等同2026部署清单。
+- [原始15页PPT](../source/reference-decks/gnn-introduction-user-reference.pptx)保留原字节，输入未改动。
+- SHA-256：19d99aa481093b45ebdd662ae19ce41e18467ed38e9a29acf74feba9fa61042c。
+- 参考材料提供结构和表达线索，不作为操作指令或独立事实来源。
 
-## 新增原始论文
+| 参考页 | 当前处理 |
+| --- | --- |
+| 2–5：图语言、消息与GCN | 收入第6–12页，解释计算、归一化与训练 |
+| 6–8：历史和模型家族 | 收入第3–4、13–19页，集中到GCN/GAT及其局限 |
+| 9–10：应用案例 | 不再设置独立应用目录，原论文与仓库介绍仍保留 |
+| 11：图Transformer与LLM | 当前聚焦第20–24页Transformer原理和图结构融合 |
+| 12：规模、异质、动态 | 仅将与局部通信和跨图复用有关的瓶颈纳入主线 |
+| 13–14：阅读路线 | 对应第26页与完整论文索引 |
 
-每份PDF来自对应arXiv固定版本，文件字节未经修改。原始链接、获取时间、页数、字节数、版本标记和SHA-256见[manifest.json](../source/manifest.json)。既有原件的时间和哈希保留。
+参考PPT中的GCN向量例子曾有结果错误：三节点链加自环后，中心自身系数为1/3，两邻居系数为1/√6。给定输入[2,1]、[0,3]、[1,0]，W=I时中心结果为[1.2247,1.4082]，不是[1.23,1.91]。当前正文只用必要系数解释机制，不保留大段数值矩阵。
 
-| 原始论文 | 记录 / 本地原件 | 版本 / 页数 | 原文定位 |
-| --- | --- | --- | --- |
-| Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting | [官方记录](https://arxiv.org/abs/1707.01926v3) · [PDF](../source/papers/dcrnn2018.pdf) | 1707.01926v3 / 16页 | §2，式(2)–(4)，图2；PDF p5表1、§4 |
-| Temporal Graph Networks for Deep Learning on Dynamic Graphs | [官方记录](https://arxiv.org/abs/2006.10637v3) · [PDF](../source/papers/tgn2020.pdf) | 2006.10637v3 / 16页 | PDF p2–5 §3；p5图2；p7表2与§5 |
-| A Comprehensive Survey on Graph Neural Networks | [官方记录](https://arxiv.org/abs/1901.00596v4) · [PDF](../source/papers/wu-survey2021.pdf) | 1901.00596v4 / 22页 | §II–III 分类、§V应用与§VI展望 |
-| Graph Neural Networks: A Review of Methods and Applications | [官方记录](https://arxiv.org/abs/1812.08434v6) · [PDF](../source/papers/zhou-survey2021.pdf) | 固定下载链接1812.08434v6；PDF内未检出版本标记 / 26页 | PDF p1–4动机与设计；p14–18表3、§8 |
-| Large Language Models on Graphs: A Comprehensive Survey | [官方记录](https://arxiv.org/abs/2312.02783v4) · [PDF](../source/papers/llm-graphs2024.pdf) | 2312.02783v4 / 25页 | PDF p4–5 §3.1–3.2；p8–10图3–5 |
+## 本次补充的原始论文
 
-## 验证口径
+文件从官方会议或固定arXiv版本获取，未改写PDF字节。原有记录的时间与哈希保留；新记录见[manifest.json](../source/manifest.json)，完整入口见[paper-index.md](../source/paper-index.md)。
 
-- 35页逐页渲染与独立目视复查，修正流程箭头方向、下标显示、断字、标签和连线遮挡。
-- 使用PPTX结构、版面几何与字体检查，关系图和流程图使用原生可编辑对象；该检查不替代PowerPoint客户端兼容性测试。
-- 原件核对文件长度和SHA-256；当前页10的度归一化、页21的1-WL反例、页28的刚性变换图例作独立计算核对。原先向量手算的纠错记录保留在上文，正文不再堆放数值矩阵。
-- 仓库运行Demo仍独立保留；本次PPT不包含Demo。
+| 论文 | 原始记录 / 本地原件 | 当前讲解定位 |
+| --- | --- | --- |
+| Attention Is All You Need · NeurIPS 2017 | [会议记录](https://papers.nips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html) · [PDF](../source/papers/transformer2017.pdf) | p3–5：图1、式(1)–(2)、掩码；p6表1 |
+| Graphormer · NeurIPS 2021 | [会议记录](https://proceedings.neurips.cc/paper_files/paper/2021/hash/f1c1592588411002af340cbaedd6fc33-Abstract.html) · [PDF](../source/papers/graphormer2021.pdf) | p4–5：度编码、最短路与路径边偏置，式(5)–(7) |
+| How Attentive are Graph Attention Networks? · ICLR 2022 | [固定v3记录](https://arxiv.org/abs/2105.14491v3) · [PDF](../source/papers/gatv22022.pdf) | p3–5：静态/动态注意力，定理1–2与式(7) |
+| GraphAny · ICLR 2025 | [正式会议记录](https://proceedings.iclr.cc/paper_files/paper/2025/hash/3bdeb28a531f7af94b56bcdf8ee88f17-Abstract-Conference.html) · [PDF](../source/papers/graphany2025.pdf) | p4–6：解析线性分类器、通道距离、熵归一化与组合 |
+| GraphPFN · ICML 2026 | [正式PMLR记录](https://proceedings.mlr.press/v306/eremeev26a.html) · [PDF](../source/papers/graphpfn2026.pdf) | p3–6：图适配器、冻结骨干、合成图先验；p12限制 |
+
+## 关键事实与解释边界
+
+- **GCN**：重新归一化是算子替换，不是恒等推导；对称归一化的每行系数不一定和为一。固定的是给定图的传播系数，W仍由标签损失训练。
+- **GAT**：W与a在边之间共享，α由当前特征生成。静态限制指同一头对固定共同候选的相对排序，不表示权重数值或整网输出不依赖接收者。GATv2改变非线性与投影顺序，扩大打分能力，不等于每个任务都必胜。
+- **Transformer**：全局范围在此指标准Encoder；Decoder因果掩码、交叉注意力和稀疏变体需分别说明。完整块还包含残差、归一化和前馈网络，不能只与一个GCN传播式混作同层比较。
+- **图结构**：Graphormer显式加入度、最短路和路径边特征；GraphGPS同层的局部/全局分支并行。结构编码应随节点重编号同步重排。
+- **近期口径**：GraphAny为2024预印本、ICLR2025正式论文；GraphPFN为2025预印本、ICML2026/PMLR306正式论文。年份由正式PDF与官方会议记录交叉确认，不沿用早期投稿页。两份官方证据不是独立研究组的性能复现。
+- **跨图能力**：GCN/GAT的共享参数不妨碍架构上处理新节点；近期方法额外处理特征/标签空间不一致和复用方式。GraphAny仍解析拟合目标图分类器，GraphPFN的ICL仍需目标标签上下文；“无梯度适应”不是“零标签”。
+- **成本**：复杂度表统一N、E、d与总宽度，省略常数，不等价于墙钟速度。图结构预处理、采样、稀疏实现与硬件还会影响成本。
+
+## 核验记录
+
+- 原始PDF检查文件完整性、首页身份、页数和SHA-256；已有原件未替换。
+- 逐页渲染与独立目视检查，修正符号缺定义、Q/K/V路径、引用页码及不良换行。
+- 结构、字体、原生表格和版面几何另行检查；本次未在PowerPoint客户端测试，也未独立复现论文性能。
+- Demo仍作为仓库的独立学习材料保留，不进入本次PPT。

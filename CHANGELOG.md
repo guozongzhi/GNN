@@ -1,5 +1,13 @@
 # 改动记录
 
+## 2026-11-15 · 聚焦发展、GCN/GAT与Transformer
+
+- 当前PPT收拢为26页，GCN与GAT各6页，发展进展与Transformer比较贯穿主线。
+- 明确GCN归一化与参数学习，展开GAT完整打分、多头及静态排序限制。
+- 对照通信掩码、Q/K/V、结构编码、GraphGPS并行融合与计算成本。
+- 补充Transformer、Graphormer、GATv2、GraphAny、GraphPFN五份原始PDF及溯源记录。
+- 同步讲稿、预览、参考映射、论文索引和离线介绍中的原件入口。
+
 ## 2026-11-15 · 原理图解重写
 
 - 当前PPT重写为35页，以消息、聚合、更新和训练贯穿经典论文，移除正文基准数字表。

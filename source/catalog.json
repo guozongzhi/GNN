@@ -286,5 +286,62 @@
     "pdf_url": "https://arxiv.org/pdf/2312.02783v4",
     "why_read": "按 Predictor / Encoder / Aligner 区分LLM角色",
     "track": "图与语言"
+  },
+  {
+    "id": "transformer2017",
+    "year": 2017,
+    "authors": "Vaswani et al.",
+    "title": "Attention Is All You Need",
+    "venue": "NeurIPS",
+    "url": "https://papers.nips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html",
+    "pdf_url": "https://papers.nips.cc/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf",
+    "why_read": "Q/K/V、缩放点积、多头与完整Transformer块；对照GAT",
+    "track": "Transformer对比"
+  },
+  {
+    "id": "graphormer2021",
+    "year": 2021,
+    "authors": "Ying et al.",
+    "title": "Do Transformers Really Perform Bad for Graph Representation?",
+    "venue": "NeurIPS",
+    "url": "https://proceedings.neurips.cc/paper_files/paper/2021/hash/f1c1592588411002af340cbaedd6fc33-Abstract.html",
+    "pdf_url": "https://papers.nips.cc/paper_files/paper/2021/file/f1c1592588411002af340cbaedd6fc33-Paper.pdf",
+    "why_read": "度、最短路和路径边编码怎样进入图Transformer",
+    "track": "Transformer对比"
+  },
+  {
+    "id": "gatv22022",
+    "year": 2022,
+    "authors": "Brody, Alon, Yahav",
+    "title": "How Attentive are Graph Attention Networks?",
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/2105.14491v3",
+    "pdf_url": "https://arxiv.org/pdf/2105.14491v3",
+    "why_read": "原始GAT的静态候选排序限制与GATv2动态注意力",
+    "track": "GAT深读"
+  },
+  {
+    "id": "graphany2025",
+    "year": 2025,
+    "authors": "Zhao, Zhu, Galkin, Mostafa, Bronstein, Tang",
+    "title": "Fully-inductive Node Classification on Arbitrary Graphs",
+    "venue": "ICLR",
+    "url": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/3bdeb28a531f7af94b56bcdf8ee88f17-Abstract-Conference.html",
+    "pdf_url": "https://proceedings.iclr.cc/paper_files/paper/2025/file/3bdeb28a531f7af94b56bcdf8ee88f17-Paper-Conference.pdf",
+    "why_read": "GraphAny以解析线性图预测器与不变量组合研究跨图节点分类",
+    "track": "近期进展",
+    "title_note": "2024预印本；按ICLR2025正式会议年份记2025。无需目标图梯度训练仍需目标图部分节点标签。"
+  },
+  {
+    "id": "graphpfn2026",
+    "year": 2026,
+    "authors": "Eremeev, Platonov, Bazhenov, Babenko, Prokhorenkova",
+    "title": "GraphPFN: A Prior-Data Fitted Graph Foundation Model",
+    "venue": "ICML / PMLR 306",
+    "url": "https://proceedings.mlr.press/v306/eremeev26a.html",
+    "pdf_url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/eremeev26a/eremeev26a.pdf",
+    "why_read": "冻结Transformer骨干、以合成图训练图注意力适配器，研究图上上下文学习",
+    "track": "近期进展",
+    "title_note": "2025预印本；以ICML2026/PMLR306最终论文为准，未沿用早期under-review ICLR2026口径。ICL仍需目标图标签上下文。"
   }
 ]
