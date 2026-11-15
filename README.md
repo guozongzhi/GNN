@@ -10,7 +10,7 @@
 
 | 你的目标 | 入口 |
 | --- | --- |
-| 阅读演示文稿 | [26 页发展脉络与 GCN / GAT 精读 PPT](outputs/presentations/GNN-原理与关键论文.pptx)：聚焦GNN发展、GCN与GAT机制，以及与Transformer的关键比较；[预览](outputs/presentations/GNN-预览.png)，[逐页讲稿](content/gnn-paper-reading.md)，[补充与修正说明](content/ppt-supplement-notes.md) |
+| 阅读演示文稿 | [33 页问题驱动与 GCN / GAT / Transformer 深度教程 PPT](outputs/presentations/GNN-原理与关键论文.pptx)：以“痛点→机制→局限→演进”串联六大模块，涵盖 GCN/GAT/GATv2 深读、1-WL 与过挤压、Transformer 对照及跨图前沿；[预览](outputs/presentations/GNN-预览.png)，[逐页讲稿](content/gnn-paper-reading.md)，[补充与修正说明](content/ppt-supplement-notes.md) |
 | 直观看懂 GNN | [离线交互介绍](outputs/gnn-guide.html)：选节点、改边、切换归一化、逐层传消息 |
 | 在 GitHub 直接阅读 | [原理与应用介绍](content/gnn-introduction.md) |
 | 找经典论文与历史里程碑 | [论文索引与原始 PDF](source/paper-index.md) |
@@ -19,7 +19,7 @@
 
 GitHub 文件页显示 HTML 源码；克隆或下载整个仓库后，在浏览器打开 `outputs/gnn-guide.html` 才能使用交互。阅读页完全离线；首次安装 Python 依赖需要联网。
 
-演示文稿共26页，采用16:9版式。发展部分交代从谱卷积、GCN/GAT到图Transformer和跨图复用的脉络；其中12页集中展开GCN与GAT，再比较通信掩码、注意力打分、Q/K/V、结构编码与成本。正文保留必要公式和反例，配直观解释，不堆放性能数字。文字、公式、表格与原理图均可编辑；逐页讲稿保留原文页码和边界。
+演示文稿共33页，采用16:9版式。全篇按「痛点→机制→局限→演进」问题链分六大模块：统一解剖台（M/AGG/U）、GCN 谱近似推导与手算校验（8页）、GAT 与 GATv2 深读（7页）、1-WL 判别盲区与过挤压、GNN 与 Transformer（含 Graphormer/GraphGPS）深层对照（6页），以及跨图泛化前沿与选型决策树。正文保留必要公式、手算例与反例，配直观图示，不堆砌性能榜单。文字、公式、表格与原理图均可编辑；逐页讲稿同步对应原文页码与边界。
 
 当前展示材料只保留一套PPT、预览和逐页讲稿。PPT不含Demo与运行命令；训练代码和固定参考实验独立保留。旧版可从[清理前的Git版本](https://github.com/guozongzhi/GNN/tree/ade736007a12c5c8680e6ebce2b54ab1405dc5c1)恢复。
 
