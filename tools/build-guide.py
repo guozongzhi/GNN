@@ -15,7 +15,7 @@ def build():
     by_id = {p['id']: p for p in papers}
     timeline = '<div class="timeline">' + ''.join(
         f'<div class="milestone"><span class="year">{by_id[key]["year"]}</span><b>{key}</b><p>{html.escape(by_id[key]["why_read"])}</p></div>' for key in timeline_ids) + '</div>'
-    index = ['# GNN 原始论文索引', '', '核验日期：2026-11-10。年份是主要发表年份；下载的 arXiv 文件不一定是出版社排版。身份核对以标题、作者与原始记录为依据；文件版本、哈希、页数见 manifest.json。', '', '| ID / 年份 | 论文 / 作者 / 会议 | 为什么读 | 原始记录与文件 |', '| --- | --- | --- | --- |']
+    index = ['# GNN 原始论文索引', '', '原有资料核验于2026-11-10，补充论文核验于2026-11-15；逐文件获取时间见manifest.json。年份是主要发表年份；下载的 arXiv 文件不一定是出版社排版。身份核对以标题、作者与原始记录为依据；文件版本、哈希、页数见 manifest.json。', '', '| ID / 年份 | 论文 / 作者 / 会议 | 为什么读 | 原始记录与文件 |', '| --- | --- | --- | --- |']
     refs = ['<div class="table-wrap"><table class="references"><thead><tr><th>ID / 年份</th><th>原始论文与阅读目的</th><th>原始记录 / PDF</th></tr></thead><tbody>']
     for row in papers:
         key = row['id']

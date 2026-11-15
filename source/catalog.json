@@ -230,5 +230,61 @@
     "pdf_url": "https://arxiv.org/pdf/2205.10666",
     "why_read": "多种关系图用于推荐系统",
     "track": "应用"
+  },
+  {
+    "id": "dcrnn2018",
+    "year": 2018,
+    "authors": "Yaguang Li, Rose Yu, Cyrus Shahabi, Yan Liu",
+    "title": "Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting",
+    "venue": "ICLR",
+    "url": "https://arxiv.org/abs/1707.01926v3",
+    "pdf_url": "https://arxiv.org/pdf/1707.01926v3",
+    "why_read": "有向随机游走扩散卷积与时序编码解码；交通预测",
+    "track": "时空图"
+  },
+  {
+    "id": "tgn2020",
+    "year": 2020,
+    "authors": "Emanuele Rossi et al.",
+    "title": "Temporal Graph Networks for Deep Learning on Dynamic Graphs",
+    "venue": "arXiv preprint / ICML 2020 GRL+ workshop",
+    "url": "https://arxiv.org/abs/2006.10637v3",
+    "pdf_url": "https://arxiv.org/pdf/2006.10637v3",
+    "why_read": "事件流、节点记忆与时间可见性；动态图框架",
+    "track": "动态图"
+  },
+  {
+    "id": "wu-survey2021",
+    "year": 2021,
+    "authors": "Zonghan Wu et al.",
+    "title": "A Comprehensive Survey on Graph Neural Networks",
+    "venue": "IEEE TNNLS 32(1), 2021; online 2020",
+    "url": "https://arxiv.org/abs/1901.00596v4",
+    "pdf_url": "https://arxiv.org/pdf/1901.00596v4",
+    "why_read": "递归、卷积、自编码、时空四类综述；预印本始于2019",
+    "track": "综述"
+  },
+  {
+    "id": "zhou-survey2021",
+    "year": 2021,
+    "authors": "Jie Zhou et al.",
+    "title": "Graph Neural Networks: A Review of Methods and Applications",
+    "venue": "AI Open 1 (2020), 57–81; published 2021",
+    "url": "https://arxiv.org/abs/1812.08434v6",
+    "pdf_url": "https://arxiv.org/pdf/1812.08434v6",
+    "why_read": "设计流程与应用地图；预印本始于2018",
+    "track": "综述",
+    "title_note": "卷年为2020；PDF接受与版权为2021，arXiv记录标注Published at AI Open 2021。本索引按公开发表时间记2021，预印本始于2018。"
+  },
+  {
+    "id": "llm-graphs2024",
+    "year": 2024,
+    "authors": "Bowen Jin, Gang Liu, Chi Han, Meng Jiang, Heng Ji, Jiawei Han",
+    "title": "Large Language Models on Graphs: A Comprehensive Survey",
+    "venue": "IEEE TKDE 36(12):8622–8642, 2024",
+    "url": "https://arxiv.org/abs/2312.02783v4",
+    "pdf_url": "https://arxiv.org/pdf/2312.02783v4",
+    "why_read": "按 Predictor / Encoder / Aligner 区分LLM角色",
+    "track": "图与语言"
   }
 ]

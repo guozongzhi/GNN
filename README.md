@@ -2,7 +2,7 @@
 
 [![Checks](https://github.com/guozongzhi/GNN/actions/workflows/checks.yml/badge.svg)](https://github.com/guozongzhi/GNN/actions/workflows/checks.yml)
 
-中文图神经网络学习包：**可交互原理介绍、21 篇关键论文索引、20 份原始 PDF，以及可在 CPU 上训练和评估的 PyTorch Demo。** 应用资料核查日期：2026-11-10。
+中文图神经网络学习包：**可交互原理介绍、26 篇论文索引、25 份原始 PDF，以及可在 CPU 上训练和评估的 PyTorch Demo。** 既有部署资料核查于2026-11-10；补充论文核查于2026-11-15。
 
 ![消息传递交互预览](outputs/message-passing.png)
 
@@ -10,7 +10,8 @@
 
 | 你的目标 | 入口 |
 | --- | --- |
-| 做一次论文精读分享 | [24 页论文精读高密度版 PPT](outputs/presentations/GNN-关键论文精读-高密度版.pptx)：公式与符号、原图、实验协议及消融、跨论文对比；[查看预览](outputs/presentations/GNN-论文精读-高密度版-预览.png)，[逐页讲稿与原文定位](content/gnn-paper-reading-dense.md) |
+| 查看融合补充版 | [32 页原理与关键论文 PPT](outputs/presentations/GNN-原理与关键论文-融合补充版.pptx)：结合用户提供的入门 PPT，新增任务头、GCN 向量手算、动态图、时空预测、GNN×LLM 与应用地图；[预览](outputs/presentations/GNN-融合补充版-预览.png)，[逐页讲稿](content/gnn-paper-reading-supplement.md)，[补充与修正说明](content/ppt-supplement-notes.md) |
+| 查看上一版论文精读 | [24 页论文精读高密度版 PPT](outputs/presentations/GNN-关键论文精读-高密度版.pptx)：公式与符号、原图、实验协议及消融、跨论文对比；[查看预览](outputs/presentations/GNN-论文精读-高密度版-预览.png)，[逐页讲稿与原文定位](content/gnn-paper-reading-dense.md) |
 | 直观看懂 GNN | [离线交互介绍](outputs/gnn-guide.html)：选节点、改边、切换归一化、逐层传消息 |
 | 在 GitHub 直接阅读 | [原理与应用介绍](content/gnn-introduction.md) |
 | 找经典论文与历史里程碑 | [论文索引与原始 PDF](source/paper-index.md) |
@@ -19,9 +20,9 @@
 
 GitHub 文件页显示 HTML 源码；克隆或下载整个仓库后，在浏览器打开 `outputs/gnn-guide.html` 才能使用交互。阅读页完全离线；首次安装 Python 依赖需要联网。
 
-当前 PPT 为 16:9 中文论文精读高密度版，更新于 2026-11-15，将原 32 页合并为 24 页，并将备注中的关键方法条件移到正文。已移除 Demo、运行命令和本地训练评估章节。正文展开早期 GNN、谱图卷积、GCN、MPNN、GraphSAGE、GAT、R-GCN、GIN，以及推荐、几何、全局注意力与科学应用论文。通过公式、符号定义、实验协议表和跨论文对照，提高每页的信息量；逐页备注与讲稿保留原始出处和页码。
+当前 PPT 为 16:9 中文融合补充版，更新于2026-11-15。在上一版24页精读稿上新增8页，将用户提供的15页入门PPT融入既有论文主线。新增DCRNN、TGN、两篇经典综述及图与LLM综述的原始PDF，并保留原文定位和版本哈希。已移除 Demo、运行命令和本地训练评估章节。正文展开早期 GNN、谱图卷积、GCN、MPNN、GraphSAGE、GAT、R-GCN、GIN，以及推荐、几何、全局注意力与科学应用论文。通过公式、符号定义、实验协议表和跨论文对照，提高每页的信息量；逐页备注与讲稿保留原始出处和页码。
 
-文字、公式、表格和数据图表可编辑；论文架构图直接裁自本地原始 PDF。论文实验数值均为作者报告，本次未重新复现；应用证据沿用 2026-11-10 的核查。原 32 页精读版、25 页图解与实验版、20 页初版保留在同目录中。仓库训练代码仍可从下方入口独立使用。
+文字、公式、表格和数据图表可编辑；论文架构图直接裁自本地原始 PDF。论文实验数值均为作者报告，本次未重新复现；既有部署证据沿用2026-11-10的核查，新增论文核验于2026-11-15。原24页高密度版、32页精读版、25页图解与实验版、20页初版保留在同目录中。仓库训练代码仍可从下方入口独立使用。
 
 ## 从零运行
 

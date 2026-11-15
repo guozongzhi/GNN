@@ -1,6 +1,6 @@
 # GNN 原始论文索引
 
-核验日期：2026-11-10。年份是主要发表年份；下载的 arXiv 文件不一定是出版社排版。身份核对以标题、作者与原始记录为依据；文件版本、哈希、页数见 manifest.json。
+原有资料核验于2026-11-10，补充论文核验于2026-11-15；逐文件获取时间见manifest.json。年份是主要发表年份；下载的 arXiv 文件不一定是出版社排版。身份核对以标题、作者与原始记录为依据；文件版本、哈希、页数见 manifest.json。
 
 | ID / 年份 | 论文 / 作者 / 会议 | 为什么读 | 原始记录与文件 |
 | --- | --- | --- | --- |
@@ -25,3 +25,8 @@
 | graphcast2023 / 2023 | Learning skillful medium-range global weather forecasting；Lam et al.；Science | 多尺度图上的全球天气预测 | [记录](https://arxiv.org/abs/2212.12794) · [本地 PDF](papers/graphcast2023.pdf) |
 | gnome2023 / 2023 | Scaling deep learning for materials discovery；Merchant et al.；Nature | GNN筛选与DFT验证的材料发现闭环 | [记录](https://doi.org/10.1038/s41586-023-06735-9) · [本地 PDF](papers/gnome2023.pdf) |
 | multibisage2022 / 2022 | MultiBiSage: A Web-Scale Recommendation System Using Multiple Bipartite Graphs at Pinterest；Gurukar et al.；KDD | 多种关系图用于推荐系统 | [记录](https://arxiv.org/abs/2205.10666) · [本地 PDF](papers/multibisage2022.pdf) |
+| dcrnn2018 / 2018 | Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting；Yaguang Li, Rose Yu, Cyrus Shahabi, Yan Liu；ICLR | 有向随机游走扩散卷积与时序编码解码；交通预测 | [记录](https://arxiv.org/abs/1707.01926v3) · [本地 PDF](papers/dcrnn2018.pdf) |
+| tgn2020 / 2020 | Temporal Graph Networks for Deep Learning on Dynamic Graphs；Emanuele Rossi et al.；arXiv preprint / ICML 2020 GRL+ workshop | 事件流、节点记忆与时间可见性；动态图框架 | [记录](https://arxiv.org/abs/2006.10637v3) · [本地 PDF](papers/tgn2020.pdf) |
+| wu-survey2021 / 2021 | A Comprehensive Survey on Graph Neural Networks；Zonghan Wu et al.；IEEE TNNLS 32(1), 2021; online 2020 | 递归、卷积、自编码、时空四类综述；预印本始于2019 | [记录](https://arxiv.org/abs/1901.00596v4) · [本地 PDF](papers/wu-survey2021.pdf) |
+| zhou-survey2021 / 2021 | Graph Neural Networks: A Review of Methods and Applications；Jie Zhou et al.；AI Open 1 (2020), 57–81; published 2021 | 设计流程与应用地图；预印本始于2018 | [记录](https://arxiv.org/abs/1812.08434v6) · [本地 PDF](papers/zhou-survey2021.pdf) |
+| llm-graphs2024 / 2024 | Large Language Models on Graphs: A Comprehensive Survey；Bowen Jin, Gang Liu, Chi Han, Meng Jiang, Heng Ji, Jiawei Han；IEEE TKDE 36(12):8622–8642, 2024 | 按 Predictor / Encoder / Aligner 区分LLM角色 | [记录](https://arxiv.org/abs/2312.02783v4) · [本地 PDF](papers/llm-graphs2024.pdf) |
