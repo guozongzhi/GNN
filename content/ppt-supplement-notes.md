@@ -1,6 +1,6 @@
 # 参考 PPT 融合补充与原文核对
 
-更新于2026-11-15。交付：[32页融合补充版](../outputs/presentations/GNN-原理与关键论文-融合补充版.pptx)，[逐页讲稿](gnn-paper-reading-supplement.md)。在原24页高密度版上新增8页，保留经典论文细节，继续不含Demo、运行命令和训练实践章节。
+更新于2026-11-15。交付：[32页融合补充版](../outputs/presentations/GNN-原理与关键论文.pptx)，[逐页讲稿](gnn-paper-reading.md)。在原24页高密度版上新增8页，保留经典论文细节，继续不含Demo、运行命令和训练实践章节。
 
 ## 参考输入
 

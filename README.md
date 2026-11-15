@@ -1,4 +1,4 @@
-# GNN：从一条消息到一次实验
+# GNN：原理、关键论文与应用
 
 [![Checks](https://github.com/guozongzhi/GNN/actions/workflows/checks.yml/badge.svg)](https://github.com/guozongzhi/GNN/actions/workflows/checks.yml)
 
@@ -10,8 +10,7 @@
 
 | 你的目标 | 入口 |
 | --- | --- |
-| 查看融合补充版 | [32 页原理与关键论文 PPT](outputs/presentations/GNN-原理与关键论文-融合补充版.pptx)：结合用户提供的入门 PPT，新增任务头、GCN 向量手算、动态图、时空预测、GNN×LLM 与应用地图；[预览](outputs/presentations/GNN-融合补充版-预览.png)，[逐页讲稿](content/gnn-paper-reading-supplement.md)，[补充与修正说明](content/ppt-supplement-notes.md) |
-| 查看上一版论文精读 | [24 页论文精读高密度版 PPT](outputs/presentations/GNN-关键论文精读-高密度版.pptx)：公式与符号、原图、实验协议及消融、跨论文对比；[查看预览](outputs/presentations/GNN-论文精读-高密度版-预览.png)，[逐页讲稿与原文定位](content/gnn-paper-reading-dense.md) |
+| 阅读演示文稿 | [32 页原理与关键论文 PPT](outputs/presentations/GNN-原理与关键论文.pptx)：结合用户提供的入门 PPT，新增任务头、GCN 向量手算、动态图、时空预测、GNN×LLM 与应用地图；[预览](outputs/presentations/GNN-预览.png)，[逐页讲稿](content/gnn-paper-reading.md)，[补充与修正说明](content/ppt-supplement-notes.md) |
 | 直观看懂 GNN | [离线交互介绍](outputs/gnn-guide.html)：选节点、改边、切换归一化、逐层传消息 |
 | 在 GitHub 直接阅读 | [原理与应用介绍](content/gnn-introduction.md) |
 | 找经典论文与历史里程碑 | [论文索引与原始 PDF](source/paper-index.md) |
@@ -20,9 +19,9 @@
 
 GitHub 文件页显示 HTML 源码；克隆或下载整个仓库后，在浏览器打开 `outputs/gnn-guide.html` 才能使用交互。阅读页完全离线；首次安装 Python 依赖需要联网。
 
-当前 PPT 为 16:9 中文融合补充版，更新于2026-11-15。在上一版24页精读稿上新增8页，将用户提供的15页入门PPT融入既有论文主线。新增DCRNN、TGN、两篇经典综述及图与LLM综述的原始PDF，并保留原文定位和版本哈希。已移除 Demo、运行命令和本地训练评估章节。正文展开早期 GNN、谱图卷积、GCN、MPNN、GraphSAGE、GAT、R-GCN、GIN，以及推荐、几何、全局注意力与科学应用论文。通过公式、符号定义、实验协议表和跨论文对照，提高每页的信息量；逐页备注与讲稿保留原始出处和页码。
+演示文稿共32页，采用16:9版式，展开核心公式、手算推导、论文实验协议、适用边界与应用证据。文字、公式、表格和数据图表可编辑；论文原图来自本地原始PDF。实验数值均为作者报告，本次未重新复现。
 
-文字、公式、表格和数据图表可编辑；论文架构图直接裁自本地原始 PDF。论文实验数值均为作者报告，本次未重新复现；既有部署证据沿用2026-11-10的核查，新增论文核验于2026-11-15。原24页高密度版、32页精读版、25页图解与实验版、20页初版保留在同目录中。仓库训练代码仍可从下方入口独立使用。
+当前展示材料只保留一套PPT、预览和逐页讲稿。PPT不含Demo与运行命令；训练代码和固定参考实验独立保留。旧版可从[清理前的Git版本](https://github.com/guozongzhi/GNN/tree/ade736007a12c5c8680e6ebce2b54ab1405dc5c1)恢复。
 
 ## 从零运行
 
@@ -112,7 +111,7 @@ python tools/check-report.py runs/first
 
 `source/catalog.json` 定义阅读索引，`source/manifest.json` 记录 PDF 来源、原始下载时间、版本标记、页数、字节与 SHA-256。`source/web-manifest.json` 记录官方网页快照及明确的获取失败项。
 
-- `python tools/verify-sources.py`：只读核验 20 份 PDF 与 6 份网页原件，无需联网。
+- `python tools/verify-sources.py`：只读核验 25 份 PDF 与 6 份网页原件，无需联网。
 - `python tools/fetch-papers.py`：复用已有文件或补下载。保留历史下载时间；没有可信时间时留空，不使用 clone 时间代替。若与已记录哈希不一致，保留原清单并写入 `tmp/download-report.json`。
 - 更新论文版本时，应先另存旧文件与清单，再明确更新目标记录；不把新的下载结果默认为旧原文。
 - Gori 2005 未取得开放全文；Scarselli 2009 是学术镜像副本；arXiv 文件不一定与出版社排版一致。论文版权归原权利人。
@@ -121,7 +120,7 @@ python tools/check-report.py runs/first
 
 | 目录 | 职责 |
 | --- | --- |
-| `content/` | 原创介绍、实验练习与事实核查 |
+| `content/` | 原理介绍、当前PPT讲稿、补充核对说明与实验练习 |
 | `demo/` | 训练、评估、实验报告、依赖和测试 |
 | `tools/` | 原文获取/核验、阅读页构建和浏览器检查 |
 | `source/` | 原始论文、官方网页和溯源清单 |
